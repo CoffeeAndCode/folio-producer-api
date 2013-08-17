@@ -13,7 +13,7 @@ PHPUnit is brought into the project with Composer which requires PHP 5.3.2+ to r
 1. change to directory of project
 2. install Composer - http://getcomposer.org/doc/00-intro.md
 3. install Composer dependencies with `php composer.phar install`
-4. run unit tests with `vendor/bin/phpunit tests/`
+4. run unit tests with `vendor/bin/phpunit test/`
 
 Note: Test files must end in `*Test.php` and test method names must start with `test*`.
 
