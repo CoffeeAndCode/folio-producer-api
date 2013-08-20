@@ -1,8 +1,6 @@
 <?php
 namespace DPSFolioProducer;
 
-require 'config.php';
-
 $assetFormat = array('Auto', 'JPEG', 'PNG', 'PDF');
 $jpegQuality = array('Minimum', 'Low', 'Medium', 'High', 'Maximum');
 $folioIntent = array('LandscapeOnly', 'PortraitOnly', 'Both');
@@ -38,22 +36,5 @@ class FolioProducer {
         $_SESSION['downloadTicket'] = $this->oauth['downloadTicket'];
         $_SESSION['downloadServer'] = $this->oauth['downloadServer'];
         return $this->oauth;
-    }
-}
-
-class Request {
-    private $headers;
-    private $params;
-
-    public function __construct() {
-        $this->headers = array(
-            'Content-Type: application/json; charset=utf-8'
-        );
-
-        $credentials = array(
-            'email' => '',
-            'password' => ''
-        );
-        $this->params = array();
     }
 }
