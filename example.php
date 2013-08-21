@@ -8,4 +8,9 @@ $api = new DPSFolioProducer\FolioProducerAPI($config);
 
 require 'app/services/session.php';
 $session = new SessionService($config);
-$session->create();
+$response = $session->create();
+var_dump($response);
+echo '<hr />';
+$session->get($response->ticket, $response->server);
+echo '<hr />';
+$session->delete($response->ticket, $response->server);

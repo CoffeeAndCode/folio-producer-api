@@ -20,7 +20,6 @@ class SessionService {
        session request.
     */
     public function create() {
-        $url = $this->url;
         $data = array(
             //'needToken' => false,
             'email' => $this->config['email'],
@@ -47,10 +46,15 @@ class SessionService {
             )
         );
         $context = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
+        $response = file_get_contents($this->url, false, $context);
+        $response = json_decode($response);
+        if ($response === null) {
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                user_error(json_last_error());
+            }
+        }
 
-        var_dump($result);
-        var_dump($http_response_header);
+        return $response;
     }
 
     /* Ends an acrobat.com session. A client should end a session when it is no
@@ -61,15 +65,15 @@ class SessionService {
        Set `cancelToken` to false to allow future use of the passed token. It
        defaults to `true`.
     */
-    public function delete($ticket, $cancelToken=true) {
-        $url = $this->url;
+    public function delete($ticket, $server, $cancelToken=true) {
+        $url = $server.'/webservices/sessions';
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header($ticket)
         );
 
         $data = array(
-            'needToken' => false
+            //'needToken' => false
         );
 
         // use key 'http' even if you send the request to https://...
@@ -88,8 +92,12 @@ class SessionService {
         var_dump($http_response_header);
 
         if ($response === null) {
-            user_error(json_last_error());
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                user_error(json_last_error());
+            }
         }
+
+        return $response;
     }
 
     /* Acrobat.com operates in a cluster environment and requests are handled
@@ -106,7 +114,7 @@ class SessionService {
        If the HTTP status result is 503 (or the request times out), then it
        is likely that the entire Acrobat.com service is temporarily unavailable.
     */
-    public function get($ticket) {
+    public function get($ticket, $server) {
         $url = $this->url;
         $headers = array(
             'User-Agent: PHP',
@@ -126,14 +134,16 @@ class SessionService {
         $result = file_get_contents($url, false, $context);
 
         $response = json_decode($result);
+        var_dump($response);
+        var_dump($http_response_header);
+
         if ($response === null) {
             if (json_last_error() !== JSON_ERROR_NONE) {
                 user_error(json_last_error());
             }
-        } else {
-            var_dump($response);
-            var_dump($http_response_header);
         }
+
+        return $response;
     }
 
     private function auth_header($ticket) {
