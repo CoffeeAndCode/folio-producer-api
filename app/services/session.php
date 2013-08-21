@@ -2,6 +2,7 @@
 
 class SessionService {
     private $config;
+    private $url = 'https://dpsapi2.acrobat.com/webservices/sessions';
 
     public function __construct($config) {
         $this->config = $config;
@@ -19,27 +20,37 @@ class SessionService {
        session request.
     */
     public function create() {
-        $url = 'https://api2.digitalpublishing.acrobat.com:443/webservices/sessions';
+        $url = $this->url;
         $data = array(
-            'needToken' => false,
+            //'needToken' => false,
             'email' => $this->config['email'],
             'password' => $this->config['password'],
-            'authToken' => $this->config['auth_token'],
-            'sessionProps' => $this->config['session_props']
+            //'authToken' => $this->config['auth_token'],
+            //'sessionProps' => $this->config['session_props']
+        );
+        $timestamp = round(microtime(true));
+        $nonce = $this->create_nonce($timestamp);
+        $signature = $this->oauth_signature($timestamp);
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            'Authorization: OAuth oauth_consumer_key="' . $this->config['consumer_key'] . '", oauth_timestamp="' . $timestamp . '", oauth_signature_method="HMAC-SHA256", oauth_signature="' . $signature . '"'
         );
 
         // use key 'http' even if you send the request to https://...
         $options = array(
             'http' => array(
-                'header'  => "Content-Type: application/json; charset=utf-8\r\n",
+                'header'  => $headers,
                 'method'  => 'POST',
-                'content' => http_build_query($data)
+                'content' => json_encode($data),
+                //'proxy' => 'tcp://localhost:8888',
+                'protocol_version' => 1.1
             )
         );
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
 
         var_dump($result);
+        var_dump($http_response_header);
     }
 
     /* Ends an acrobat.com session. A client should end a session when it is no
@@ -51,7 +62,7 @@ class SessionService {
        defaults to `true`.
     */
     public function delete($ticket, $cancelToken=true) {
-        $url = 'https://api2.digitalpublishing.acrobat.com:443/webservices/sessions';
+        $url = $this->url;
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header($ticket)
@@ -96,8 +107,10 @@ class SessionService {
        is likely that the entire Acrobat.com service is temporarily unavailable.
     */
     public function get($ticket) {
-        $url = 'https://api2.digitalpublishing.acrobat.com:443/webservices/sessions';
+        $url = $this->url;
         $headers = array(
+            'User-Agent: PHP',
+            'Accept: */*',
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header($ticket)
         );
@@ -125,5 +138,29 @@ class SessionService {
 
     private function auth_header($ticket) {
         return 'Authorization: AdobeAuth ticket="'.urlencode($ticket).'"';
+    }
+
+    private function create_nonce($timestamp) {
+        $sequence = array_merge(range(0,9),range('A','Z'),range('a','z'));
+        $length = count($sequence);
+        shuffle($sequence);
+        return md5( substr($timestamp . implode('', $sequence), 0, $length ));
+    }
+
+    private function oauth_message($timestamp) {
+        $query = http_build_query(array(
+            'oauth_consumer_key' => $this->config['consumer_key'],
+            'oauth_signature_method' => 'HMAC-SHA256',
+            'oauth_timestamp' => $timestamp
+        ));
+        return 'POST&'.urlencode($this->url).'&'.urlencode($query);
+    }
+
+    private function oauth_signature($timestamp) {
+        $message = $this->oauth_message($timestamp);
+        $hash = hash_hmac('sha256', $message, $this->config['consumer_secret'] . '&', false);
+        $bytes = pack('H*', $hash);
+        $base = base64_encode($bytes);
+        return urlencode($base);
     }
 }
