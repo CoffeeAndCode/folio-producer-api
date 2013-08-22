@@ -15,10 +15,15 @@ class Client {
         $this->sync_to_session();
     }
 
-    private function create_session() {
+    protected function create_session() {
+        $response = '';
         if (!$this->ticket) {
-            $this->session->create();
+            $response = $this->session->create();
+            $this->request_server = $response->server;
+            $this->ticket = $response->ticket;
+            $this->sync_to_session();
         }
+        return $response;
     }
 
     protected function sync_to_session() {
