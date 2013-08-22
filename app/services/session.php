@@ -1,4 +1,5 @@
 <?php
+namespace DPSFolioProducer;
 
 class SessionService {
     private $config;
@@ -117,8 +118,6 @@ class SessionService {
     public function get($ticket, $server) {
         $url = $this->url;
         $headers = array(
-            'User-Agent: PHP',
-            'Accept: */*',
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header($ticket)
         );

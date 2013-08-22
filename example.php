@@ -1,16 +1,13 @@
 <?php
 require 'config.php';
-require 'app/folio_producer.php';
+require 'app/client.php';
 
 if (!isset($config)) { user_error('Missing configuration.'); }
-$api = new DPSFolioProducer\FolioProducerAPI($config);
+$client = new DPSFolioProducer\Client($config);
 
-
-require 'app/services/session.php';
-$session = new SessionService($config);
-$response = $session->create();
-var_dump($response);
-echo '<hr />';
-$session->get($response->ticket, $response->server);
-echo '<hr />';
-$session->delete($response->ticket, $response->server);
+// $response = $session->create();
+// var_dump($response);
+// echo '<hr />';
+// $session->get($response->ticket, $response->server);
+// echo '<hr />';
+// $session->delete($response->ticket, $response->server);
