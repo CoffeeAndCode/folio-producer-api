@@ -1,9 +1,10 @@
 <?php
 namespace DPSFolioProducer;
 
-class SessionService {
-    private $config;
-    private $url = 'https://dpsapi2.acrobat.com/webservices/sessions';
+require 'service.php';
+
+class SessionService extends Service {
+    protected $config = null;
 
     public function __construct($config) {
         $this->config = $config;
@@ -47,13 +48,14 @@ class SessionService {
             )
         );
         $context = stream_context_create($options);
-        $response = file_get_contents($this->url, false, $context);
+        $response = file_get_contents($this->create_url('sessions'), false, $context);
         $response = json_decode($response);
         if ($response === null) {
             if (json_last_error() !== JSON_ERROR_NONE) {
                 user_error(json_last_error());
             }
         }
+        $this->api_server = $response->server;
 
         return $response;
     }
@@ -115,8 +117,8 @@ class SessionService {
        If the HTTP status result is 503 (or the request times out), then it
        is likely that the entire Acrobat.com service is temporarily unavailable.
     */
-    public function get($ticket, $server) {
-        $url = $this->url;
+    public function get($ticket) {
+        $url = $this->create_url('sessions');
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header($ticket)
@@ -162,7 +164,7 @@ class SessionService {
             'oauth_signature_method' => 'HMAC-SHA256',
             'oauth_timestamp' => $timestamp
         ));
-        return 'POST&'.urlencode($this->url).'&'.urlencode($query);
+        return 'POST&'.urlencode($this->create_url('sessions')).'&'.urlencode($query);
     }
 
     private function oauth_signature($timestamp) {

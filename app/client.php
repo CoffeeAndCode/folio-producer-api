@@ -9,7 +9,7 @@ class Client {
     protected $request_server = null;
     protected $ticket = null;
 
-    public function __construct($config=array()) {
+    public function __construct($config) {
         $this->config = $config;
         $this->session = new SessionService($config);
         $this->sync_to_session();
