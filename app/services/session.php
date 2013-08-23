@@ -1,14 +1,14 @@
 <?php
 namespace DPSFolioProducer;
 
-require 'request.php';
-require 'service.php';
+require_once 'request.php';
+require_once 'service.php';
 
 class SessionService extends Service {
-    protected $config = null;
+    public $config = null;
 
-    public function __construct($config) {
-        $this->config = $config;
+    public function __construct(&$config) {
+        $this->config = &$config;
     }
 
     /* Establishes a session with the acrobat.com server. You must successfully
@@ -67,7 +67,7 @@ class SessionService extends Service {
         $url = $server.'/webservices/sessions';
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
-            $this->auth_header($ticket)
+            $this->auth_header()
         );
 
         $data = array(
@@ -86,8 +86,6 @@ class SessionService extends Service {
         $result = file_get_contents($url, false, $context);
 
         $response = json_decode($result);
-        var_dump($response);
-        var_dump($http_response_header);
 
         if ($response === null) {
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -116,7 +114,7 @@ class SessionService extends Service {
         $url = $this->create_url('sessions');
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
-            $this->auth_header($ticket)
+            $this->auth_header()
         );
 
         // use key 'http' even if you send the request to https://...
@@ -130,8 +128,6 @@ class SessionService extends Service {
         $result = file_get_contents($url, false, $context);
 
         $response = json_decode($result);
-        var_dump($response);
-        var_dump($http_response_header);
 
         if ($response === null) {
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -140,10 +136,6 @@ class SessionService extends Service {
         }
 
         return $response;
-    }
-
-    private function auth_header($ticket) {
-        return 'Authorization: AdobeAuth ticket="'.urlencode($ticket).'"';
     }
 
     private function create_nonce($timestamp) {

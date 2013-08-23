@@ -1,5 +1,5 @@
 <?php
-require 'app/client.php';
+require_once 'app/client.php';
 
 /**
  * Inherit from class we are testing so we can reveal properties
