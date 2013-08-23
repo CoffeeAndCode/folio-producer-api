@@ -1,6 +1,7 @@
 <?php
 namespace DPSFolioProducer;
 
+require 'request.php';
 require 'service.php';
 
 class SessionService extends Service {
@@ -47,17 +48,11 @@ class SessionService extends Service {
                 'protocol_version' => 1.1
             )
         );
-        $context = stream_context_create($options);
-        $response = file_get_contents($this->create_url('sessions'), false, $context);
-        $response = json_decode($response);
-        if ($response === null) {
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                user_error(json_last_error());
-            }
-        }
+        $request = new Request($this->create_url('sessions'), $options);
+        $response = $request->run();
         $this->api_server = $response->server;
 
-        return $response;
+        return $request;
     }
 
     /* Ends an acrobat.com session. A client should end a session when it is no

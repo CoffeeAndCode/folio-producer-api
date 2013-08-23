@@ -9,6 +9,7 @@ class ClientTestWrapper extends DPSFolioProducer\Client {
     public $config;
     public $download_ticket;
     public $request_server;
+    public $session;
     public $ticket;
 }
 
@@ -55,5 +56,38 @@ class ClientTest extends PHPUnit_Framework_TestCase {
     public function test_creates_session_service() {
         $client = new ClientTestWrapper($this->test_config);
         $this->assertEquals(get_class($client->session), 'DPSFolioProducer\SessionService');
+    }
+
+    public function test_create_session_only_called_once() {
+        $client = new ClientTestWrapper($this->test_config);
+        $session = $this->getMock('Session', array('create'));
+        $session->expects($this->once())
+                ->method('create')
+                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
+        $client->session = $session;
+        $client->create_session();
+        $client->create_session();
+    }
+
+    public function test_stores_ticket_after_create_session_call() {
+        $client = new ClientTestWrapper($this->test_config);
+        $session = $this->getMock('Session', array('create'));
+        $session->expects($this->once())
+                ->method('create')
+                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
+        $client->session = $session;
+        $client->create_session();
+        $this->assertEquals($client->ticket, '1234');
+    }
+
+    public function test_stores_request_server_after_create_session_call() {
+        $client = new ClientTestWrapper($this->test_config);
+        $session = $this->getMock('Session', array('create'));
+        $session->expects($this->once())
+                ->method('create')
+                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
+        $client->session = $session;
+        $client->create_session();
+        $this->assertEquals($client->request_server, 'http://example.com');
     }
 }
