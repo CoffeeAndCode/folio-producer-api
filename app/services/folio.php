@@ -11,7 +11,46 @@ class FolioService extends Service {
         $this->config = &$config;
     }
 
-    public function create() {
+    public function create($data) {
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        $defaults = array(
+            'folioName' => null,
+            'magazineTitle' => null,
+            'folioNumber' => null,
+            //'folioDescription' => '',
+            //'publicationDate' => null,
+            //'coverDate' => '',
+            //'resolutionWidth' => null,   // 240 - 4095
+            //'resolutionHeight' => null,  // 240 - 4095
+            //'defaultAssetFormat' => 'Auto',
+            //'defaultJPEGQuality' => 'High',
+            //'bindingRight' => false,
+            //'locked' => false,
+            //'folioIntent' => 'Both',
+            //'targetViewer' => 'Unset',
+            //'filters' => '',
+            //'viewer' => ''
+        );
+        $data = array_merge($defaults, $data);
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'POST',
+                'content' => json_encode($data),
+                //'proxy' => 'tcp://localhost:8888',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios'), $options);
+        $response = $request->run();
+        return $request;
     }
 
     public function delete($folio_id) {

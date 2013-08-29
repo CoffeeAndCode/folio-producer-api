@@ -16,7 +16,15 @@ class Client {
         $this->config = &$config;
         $this->folio = new FolioService($config);
         $this->session = new SessionService($config);
-        $this->sync_to_session();
+        $this->sync_session();
+    }
+
+    public function create_folio($options) {
+        $request = null;
+        if ($this->ticket) {
+            $request = $this->folio->create($options);
+        }
+        return $request;
     }
 
     public function create_session() {
@@ -25,7 +33,11 @@ class Client {
             $request = $this->session->create();
             $this->request_server = $this->config['request_server'] = $this->folio->config['request_server'] = $request->response->server;
             $this->ticket = $this->config['ticket'] = $this->folio->config['ticket'] = $request->response->ticket;
-            $this->sync_to_session();
+
+            if (session_id()) {
+                $_SESSION['request_server'] = $this->request_server;
+                $_SESSION['ticket'] = $this->ticket;
+            }
         }
         return $request;
     }
@@ -38,11 +50,19 @@ class Client {
         return $request;
     }
 
-    protected function sync_to_session() {
+    protected function sync_session() {
         if (session_id()) {
-            $_SESSION['download_ticket'] = $this->download_ticket;
-            $_SESSION['request_server'] = $this->request_server;
-            $_SESSION['ticket'] = $this->ticket;
+            if (isset($_SESSION) && isset($_SESSION['download_ticket'])) {
+                $this->download_ticket = $_SESSION['download_ticket'];
+            }
+
+            if (isset($_SESSION) && isset($_SESSION['request_server'])) {
+                $this->request_server = $this->config['request_server'] = $this->folio->config['request_server'] = $_SESSION['request_server'];
+            }
+
+            if (isset($_SESSION) && isset($_SESSION['ticket'])) {
+                $this->ticket = $this->config['ticket'] = $this->folio->config['ticket'] = $_SESSION['ticket'];
+            }
         }
     }
 }
