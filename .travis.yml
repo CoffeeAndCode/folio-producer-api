@@ -10,4 +10,4 @@ before_script:
   - php composer.phar install
   - cp config.sample.php config.php
 
-script: phpunit --configuration phpunit.xml.dist
+script: vendor/bin/phpunit --configuration phpunit.xml.dist
