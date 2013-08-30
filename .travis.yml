@@ -1,4 +1,5 @@
 language: php
+
 php:
   - 5.3.3
   - 5.3
@@ -6,8 +7,7 @@ php:
   - 5.5
 
 before_script:
-  - curl -sS https://getcomposer.org/installer | php
-  - php composer.phar install
+  - composer install
   - cp config.sample.php config.php
 
-script: vendor/bin/phpunit --configuration phpunit.xml.dist
+script: phpunit
