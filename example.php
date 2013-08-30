@@ -1,8 +1,9 @@
 <?php
 session_start();
 
-require 'config.php';
-require 'app/client.php';
+require_once 'app/config.php';
+require_once 'app/client.php';
+include 'config.php';
 
 if (!isset($config)) { user_error('Missing configuration.'); }
 $client = new DPSFolioProducer\Client($config);

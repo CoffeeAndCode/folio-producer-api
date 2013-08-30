@@ -35,7 +35,9 @@ class ClientTest extends PHPUnit_Framework_TestCase {
 
     public function test_stores_passed_config() {
         $client = new ClientTestWrapper($this->test_config);
-        $this->assertEquals($client->config, $this->test_config);
+        foreach($this->test_config as $key => $value) {
+            $this->assertEquals($client->config->$key, $this->test_config[$key]);
+        }
     }
 
     public function test_initializes_with_null_download_ticket() {
@@ -77,7 +79,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
                 ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
         $client->session = $session;
         $client->create_session();
-        $this->assertEquals($client->ticket, '1234');
+        $this->assertEquals($client->config->ticket, '1234');
     }
 
     public function test_stores_request_server_after_create_session_call() {
@@ -88,6 +90,6 @@ class ClientTest extends PHPUnit_Framework_TestCase {
                 ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
         $client->session = $session;
         $client->create_session();
-        $this->assertEquals($client->request_server, 'http://example.com');
+        $this->assertEquals($client->config->request_server, 'http://example.com');
     }
 }

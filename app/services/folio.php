@@ -8,7 +8,7 @@ class FolioService extends Service {
     public $config = null;
 
     public function __construct($config) {
-        $this->config = &$config;
+        $this->config = $config;
     }
 
     public function create($data) {

@@ -7,8 +7,8 @@ require_once 'service.php';
 class SessionService extends Service {
     public $config = null;
 
-    public function __construct(&$config) {
-        $this->config = &$config;
+    public function __construct($config) {
+        $this->config = $config;
     }
 
     /* Establishes a session with the acrobat.com server. You must successfully
@@ -25,17 +25,17 @@ class SessionService extends Service {
     public function create() {
         $data = array(
             //'needToken' => false,
-            'email' => $this->config['email'],
-            'password' => $this->config['password'],
-            //'authToken' => $this->config['auth_token'],
-            //'sessionProps' => $this->config['session_props']
+            'email' => $this->config->email,
+            'password' => $this->config->password,
+            //'authToken' => $this->config->auth_token,
+            //'sessionProps' => $this->config->session_props
         );
         $timestamp = round(microtime(true));
         $nonce = $this->create_nonce($timestamp);
         $signature = $this->oauth_signature($timestamp);
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
-            'Authorization: OAuth oauth_consumer_key="' . $this->config['consumer_key'] . '", oauth_timestamp="' . $timestamp . '", oauth_signature_method="HMAC-SHA256", oauth_signature="' . $signature . '"'
+            'Authorization: OAuth oauth_consumer_key="' . $this->config->consumer_key . '", oauth_timestamp="' . $timestamp . '", oauth_signature_method="HMAC-SHA256", oauth_signature="' . $signature . '"'
         );
 
         // use key 'http' even if you send the request to https://...
@@ -50,7 +50,6 @@ class SessionService extends Service {
         );
         $request = new Request($this->create_url('sessions'), $options);
         $response = $request->run();
-        $this->api_server = $response->server;
 
         return $request;
     }
@@ -147,7 +146,7 @@ class SessionService extends Service {
 
     private function oauth_message($timestamp) {
         $query = http_build_query(array(
-            'oauth_consumer_key' => $this->config['consumer_key'],
+            'oauth_consumer_key' => $this->config->consumer_key,
             'oauth_signature_method' => 'HMAC-SHA256',
             'oauth_timestamp' => $timestamp
         ));
@@ -156,7 +155,7 @@ class SessionService extends Service {
 
     private function oauth_signature($timestamp) {
         $message = $this->oauth_message($timestamp);
-        $hash = hash_hmac('sha256', $message, $this->config['consumer_secret'] . '&', false);
+        $hash = hash_hmac('sha256', $message, $this->config->consumer_secret . '&', false);
         $bytes = pack('H*', $hash);
         $base = base64_encode($bytes);
         return urlencode($base);

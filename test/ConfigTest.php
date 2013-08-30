@@ -24,11 +24,6 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($config->hello, 'universe');
     }
 
-    public function test_retrieving_unset_property_is_undefined() {
-        $config = new DPSFolioProducer\Config();
-        $this->assertTrue(!isset($config->hello));
-    }
-
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Undefined index: hello
@@ -45,5 +40,17 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
         ));
         $this->assertEquals($config->hello, 'world');
         $this->assertEquals($config->key, true);
+    }
+
+    public function test_isset_returns_true_for_existing_value() {
+        $config = new DPSFolioProducer\Config(array(
+            'hello' => 'world'
+        ));
+        $this->assertTrue(isset($config->hello));
+    }
+
+    public function test_isset_returns_false_for_nonexistant_value() {
+        $config = new DPSFolioProducer\Config();
+        $this->assertTrue(!isset($config->hello));
     }
 }
