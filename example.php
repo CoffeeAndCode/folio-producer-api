@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-require_once 'app/config.php';
-require_once 'app/client.php';
+require 'vendor/autoload.php';
 include 'config.php';
 
 if (!isset($config)) { user_error('Missing configuration.'); }

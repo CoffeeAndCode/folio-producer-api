@@ -1,6 +1,4 @@
 <?php
-require_once 'app/config.php';
-
 class ConfigWrapper extends DPSFolioProducer\Config {
     public $data;
 }

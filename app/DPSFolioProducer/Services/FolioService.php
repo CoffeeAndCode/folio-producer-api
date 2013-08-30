@@ -1,8 +1,5 @@
 <?php
-namespace DPSFolioProducer;
-
-require_once 'request.php';
-require_once 'service.php';
+namespace DPSFolioProducer\Services;
 
 class FolioService extends Service {
     public $config = null;

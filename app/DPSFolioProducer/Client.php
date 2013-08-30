@@ -1,10 +1,6 @@
 <?php
 namespace DPSFolioProducer;
 
-require_once 'config.php';
-require_once 'services/folio.php';
-require_once 'services/session.php';
-
 class Client {
     protected $config = null;
     protected $folio = null;
@@ -12,8 +8,8 @@ class Client {
 
     public function __construct($config) {
         $this->config = new Config($config);
-        $this->folio = new FolioService($this->config);
-        $this->session = new SessionService($this->config);
+        $this->folio = new Services\FolioService($this->config);
+        $this->session = new Services\SessionService($this->config);
         $this->sync_session();
     }
 

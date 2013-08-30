@@ -1,5 +1,5 @@
 <?php
-namespace DPSFolioProducer;
+namespace DPSFolioProducer\Services;
 
 class Service {
     protected $ticket = null;

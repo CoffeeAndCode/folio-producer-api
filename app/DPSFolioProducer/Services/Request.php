@@ -1,5 +1,5 @@
 <?php
-namespace DPSFolioProducer;
+namespace DPSFolioProducer\Services;
 
 class Request {
     protected $is_retry = false;

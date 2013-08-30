@@ -1,6 +1,4 @@
 <?php
-require_once 'app/client.php';
-
 /**
  * Inherit from class we are testing so we can reveal properties
  * in tests that are not accessible in the real class.
@@ -57,7 +55,7 @@ class ClientTest extends PHPUnit_Framework_TestCase {
 
     public function test_creates_session_service() {
         $client = new ClientTestWrapper($this->test_config);
-        $this->assertEquals(get_class($client->session), 'DPSFolioProducer\SessionService');
+        $this->assertEquals(get_class($client->session), 'DPSFolioProducer\Services\SessionService');
     }
 
     public function test_create_session_only_called_once() {
