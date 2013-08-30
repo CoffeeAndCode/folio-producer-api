@@ -1,33 +1,40 @@
 <?php
-class ConfigTest_Config {
-    public $config = array();
-}
+require_once 'app/config.php';
 
-class ConfigTest_ObjectA {
-    public $config = null;
-
-    public function __construct($config) {
-        $this->config = $config;
-    }
-
-    public function change() {
-        $this->config->config['hello'] = 'world';
-    }
+class ConfigWrapper extends DPSFolioProducer\Config {
+    public $data;
 }
 
 class ConfigTest extends PHPUnit_Framework_TestCase {
-    public function test_instances_receive_same_object() {
-        $config = new ConfigTest_Config();
-        $a = new ConfigTest_ObjectA($config);
-        $b = new ConfigTest_ObjectA($config);
-        $this->assertEquals(spl_object_hash($a->config), spl_object_hash($b->config));
+    public function test_defaults_to_empty_array() {
+        $config = new ConfigWrapper();
+        $this->assertEquals(count($config->data), 0);
     }
 
-    public function test_config_does_not_retain_outside_changes() {
-        $config = new ConfigTest_Config();
-        $a = new ConfigTest_ObjectA($config);
-        $b = new ConfigTest_ObjectA($a->config);
-        $b->change();
-        $this->assertEquals(count($a->config), count($b->config));
+    public function test_can_retrieve_stored_configs() {
+        $config = new DPSFolioProducer\Config();
+        $config->hello = 'world';
+        $this->assertEquals($config->hello, 'world');
+    }
+
+    public function test_can_overwrite_stored_configs() {
+        $config = new DPSFolioProducer\Config();
+        $config->hello = 'world';
+        $config->hello = 'universe';
+        $this->assertEquals($config->hello, 'universe');
+    }
+
+    public function test_retrieving_unset_property_is_undefined() {
+        $config = new DPSFolioProducer\Config();
+        $this->assertTrue(!isset($config->hello));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Undefined index: hello
+     */
+    public function test_retrieving_unset_property_throws_exception() {
+        $config = new DPSFolioProducer\Config();
+        $this->assertTrue($config->hello);
     }
 }
