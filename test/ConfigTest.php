@@ -37,4 +37,13 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
         $config = new DPSFolioProducer\Config();
         $this->assertTrue($config->hello);
     }
+
+    public function test_initalize_config_with_data() {
+        $config = new DPSFolioProducer\Config(array(
+            'hello' => 'world',
+            'key' => true
+        ));
+        $this->assertEquals($config->hello, 'world');
+        $this->assertEquals($config->key, true);
+    }
 }
