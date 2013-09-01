@@ -24,18 +24,6 @@ class Request {
                 user_error(json_last_error());
             }
         }
-
-        if ($this->get_response_code() === 200 &&
-            property_exists($this->response, 'status') &&
-            $this->response->status === 'InvalidTicket' &&
-            !$this->is_retry) {
-
-            // make create_session call
-                // on success, make original call
-                // $this->retry();
-                // on failure, fail method
-                // user_error('create_session call failed, unable to retry');
-        }
         return $this->response;
     }
 
