@@ -10,7 +10,7 @@ class Service {
 
     protected function create_url($suffix='') {
         $server = $this->config->api_server;
-        if (isset($this->config->request_server)) {
+        if (isset($this->config->request_server) && $this->config->request_server) {
             $server = $this->config->request_server;
         }
         return $server.'/webservices/'.$suffix;

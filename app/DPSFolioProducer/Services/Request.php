@@ -2,7 +2,7 @@
 namespace DPSFolioProducer\Services;
 
 class Request {
-    protected $is_retry = false;
+    public $is_retry = false;
     public $options = null;
     public $response_headers = array();
     public $response = null;

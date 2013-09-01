@@ -45,7 +45,7 @@ class Client {
             property_exists($request->response, 'status') &&
             $request->response->status === 'InvalidTicket' &&
             !$request->is_retry) {
-
+            $this->reset();
             $this->create_session();
             $request->retry();
         }
@@ -61,6 +61,15 @@ class Client {
 
     private function get_command_class($command_name) {
         return '\\DPSFolioProducer\\Commands\\'.$this->camelize($command_name);
+    }
+
+    private function reset() {
+        $this->config->request_server = null;
+        $this->config->ticket = null;
+
+        if (session_id()) {
+            session_unset();
+        }
     }
 
     private function sync_session() {
