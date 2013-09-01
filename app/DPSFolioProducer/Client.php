@@ -13,14 +13,6 @@ class Client {
         $this->sync_session();
     }
 
-    public function create_folio($options) {
-        $request = null;
-        if (isset($this->config->ticket)) {
-            $request = $this->folio->create($options);
-        }
-        return $request;
-    }
-
     public function create_session() {
         $request = null;
         if (!isset($this->config->ticket) || !$this->config->ticket) {
@@ -36,15 +28,26 @@ class Client {
         return $request;
     }
 
-    public function get_folio_metadata() {
-        $request = null;
-        if (isset($this->config->ticket)) {
-            $request = $this->folio->get_folio_metadata();
+    public function execute($command_name, $options=array()) {
+        $command_class_name = '\\DPSFolioProducer\\Commands\\'.$this->camelize($command_name);
+        $command = new $command_class_name($options);
+
+        if (!isset($this->config->ticket)) {
+            $this->create_session();
         }
-        return $request;
+
+        $command->folio = $this->folio;
+        $command->session = $this->session;
+        return $command->execute();
     }
 
-    protected function sync_session() {
+    private function camelize($word) {
+        $words = explode('_', $word);
+        $words = array_map('ucfirst', $words);
+        return implode('', $words);
+    }
+
+    private function sync_session() {
         if (session_id()) {
             if (isset($_SESSION) && isset($_SESSION['download_ticket'])) {
                 $this->config->download_ticket = $_SESSION['download_ticket'];

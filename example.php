@@ -6,9 +6,7 @@ include 'config.php';
 
 if (!isset($config)) { user_error('Missing configuration.'); }
 $client = new DPSFolioProducer\Client($config);
-$client->create_session();
-
-$request = $client->get_folio_metadata();
+$request = $client->execute('get_folio_metadata');
 
 echo '<h1>Folios</h1>';
 foreach ($request->response->folios as $folio) {
@@ -23,5 +21,5 @@ $options = array(
     'resolutionHeight' => 240,
     'resolutionWidth' => 240
 );
-$request = $client->create_folio($options);
+$request = $client->execute('create_folio', $options);
 var_dump($request);
