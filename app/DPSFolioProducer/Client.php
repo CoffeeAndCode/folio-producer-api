@@ -29,8 +29,8 @@ class Client {
     }
 
     public function execute($command_name, $options=array()) {
-        $command_class_name = '\\DPSFolioProducer\\Commands\\'.$this->camelize($command_name);
-        $command = new $command_class_name($options);
+        $command_class = $this->get_command_class($command_name);
+        $command = new $command_class($options);
 
         if (!isset($this->config->ticket)) {
             $this->create_session();
@@ -38,13 +38,29 @@ class Client {
 
         $command->folio = $this->folio;
         $command->session = $this->session;
-        return $command->execute();
+        $request = $command->execute();
+
+        // if an InvalidTicket response is returned, reauthenticate and retry
+        if ($request->get_response_code() === 200 &&
+            property_exists($request->response, 'status') &&
+            $request->response->status === 'InvalidTicket' &&
+            !$request->is_retry) {
+
+            $this->create_session();
+            $request->retry();
+        }
+
+        return $request;
     }
 
     private function camelize($word) {
         $words = explode('_', $word);
         $words = array_map('ucfirst', $words);
         return implode('', $words);
+    }
+
+    private function get_command_class($command_name) {
+        return '\\DPSFolioProducer\\Commands\\'.$this->camelize($command_name);
     }
 
     private function sync_session() {

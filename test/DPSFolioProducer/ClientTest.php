@@ -9,6 +9,13 @@ class ClientTestWrapper extends DPSFolioProducer\Client {
     public $request_server;
     public $session;
     public $ticket;
+    public function get_command_class($command_name) {
+        parent::get_command_class($command_name);
+    }
+}
+
+class ClientTestCommand extends DPSFolioProducer\Commands\Command {
+    public function execute() {}
 }
 
 class ClientTest extends PHPUnit_Framework_TestCase {
@@ -90,4 +97,8 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         $client->create_session();
         $this->assertEquals($client->config->request_server, 'http://example.com');
     }
+
+    public function test_execute_will_call_create_session_if_ticket_does_not_exist() {}
+    public function test_execute_will_not_call_create_session_if_ticket_exists() {}
+    public function test_execute_will_retry_original_request_if_ticket_is_expired() {}
 }
