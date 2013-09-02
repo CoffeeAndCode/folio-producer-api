@@ -1,4 +1,6 @@
 <?php
+use \Mockery as m;
+
 /**
  * Inherit from class we are testing so we can reveal properties
  * in tests that are not accessible in the real class.
@@ -28,6 +30,10 @@ class ClientTest extends PHPUnit_Framework_TestCase {
         'password' => '',
         'session_props' => ''
     );
+
+    public function tearDown() {
+        m::close();
+    }
 
     /**
      * @expectedException Exception
