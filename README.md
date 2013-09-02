@@ -18,6 +18,13 @@ PHPUnit is brought into the project with Composer which requires PHP 5.3.2+ to r
 Note: Test files must end in `*Test.php` and test method names must start with `test*`.
 
 
+#### Test Coverage
+
+If you have xdebug installed, you can create an html code coverage report by running:
+
+    vendor/bin/phpunit --coverage-html ./coverage
+
+
 ### Features
 
 * get list of folios
