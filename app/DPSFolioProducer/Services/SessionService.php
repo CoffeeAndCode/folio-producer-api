@@ -1,10 +1,12 @@
 <?php
 namespace DPSFolioProducer\Services;
 
-class SessionService extends Service {
+class SessionService extends Service
+{
     public $config = null;
 
-    public function __construct($config) {
+    public function __construct($config)
+    {
         $this->config = $config;
     }
 
@@ -19,7 +21,8 @@ class SessionService extends Service {
        eturned by t om server in the response to a previous successful create
        session request.
     */
-    public function create() {
+    public function create()
+    {
         $data = array(
             //'needToken' => false,
             'email' => $this->config->email,
@@ -59,7 +62,8 @@ class SessionService extends Service {
        Set `cancelToken` to false to allow future use of the passed token. It
        defaults to `true`.
     */
-    public function delete($ticket, $server, $cancelToken=true) {
+    public function delete($ticket, $server, $cancelToken=true)
+    {
         $url = $server.'/webservices/sessions';
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
@@ -106,7 +110,8 @@ class SessionService extends Service {
        If the HTTP status result is 503 (or the request times out), then it
        is likely that the entire Acrobat.com service is temporarily unavailable.
     */
-    public function get($ticket) {
+    public function get($ticket)
+    {
         $url = $this->create_url('sessions');
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
@@ -134,27 +139,33 @@ class SessionService extends Service {
         return $response;
     }
 
-    private function create_nonce($timestamp) {
+    private function create_nonce($timestamp)
+    {
         $sequence = array_merge(range(0,9),range('A','Z'),range('a','z'));
         $length = count($sequence);
         shuffle($sequence);
+
         return md5( substr($timestamp . implode('', $sequence), 0, $length ));
     }
 
-    private function oauth_message($timestamp) {
+    private function oauth_message($timestamp)
+    {
         $query = http_build_query(array(
             'oauth_consumer_key' => $this->config->consumer_key,
             'oauth_signature_method' => 'HMAC-SHA256',
             'oauth_timestamp' => $timestamp
         ));
+
         return 'POST&'.urlencode($this->create_url('sessions')).'&'.urlencode($query);
     }
 
-    private function oauth_signature($timestamp) {
+    private function oauth_signature($timestamp)
+    {
         $message = $this->oauth_message($timestamp);
         $hash = hash_hmac('sha256', $message, $this->config->consumer_secret . '&', false);
         $bytes = pack('H*', $hash);
         $base = base64_encode($bytes);
+
         return urlencode($base);
     }
 }

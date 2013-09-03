@@ -1,21 +1,26 @@
 <?php
-class ConfigWrapper extends DPSFolioProducer\Config {
+class ConfigWrapper extends DPSFolioProducer\Config
+{
     public $data;
 }
 
-class ConfigTest extends PHPUnit_Framework_TestCase {
-    public function test_defaults_to_empty_array() {
+class ConfigTest extends PHPUnit_Framework_TestCase
+{
+    public function test_defaults_to_empty_array()
+    {
         $config = new ConfigWrapper();
         $this->assertEquals(count($config->data), 0);
     }
 
-    public function test_can_retrieve_stored_configs() {
+    public function test_can_retrieve_stored_configs()
+    {
         $config = new DPSFolioProducer\Config();
         $config->hello = 'world';
         $this->assertEquals($config->hello, 'world');
     }
 
-    public function test_can_overwrite_stored_configs() {
+    public function test_can_overwrite_stored_configs()
+    {
         $config = new DPSFolioProducer\Config();
         $config->hello = 'world';
         $config->hello = 'universe';
@@ -26,12 +31,14 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
      * @expectedException Exception
      * @expectedExceptionMessage Undefined index: hello
      */
-    public function test_retrieving_unset_property_throws_exception() {
+    public function test_retrieving_unset_property_throws_exception()
+    {
         $config = new DPSFolioProducer\Config();
         $this->assertTrue($config->hello);
     }
 
-    public function test_initalize_config_with_data() {
+    public function test_initalize_config_with_data()
+    {
         $config = new DPSFolioProducer\Config(array(
             'hello' => 'world',
             'key' => true
@@ -40,14 +47,16 @@ class ConfigTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals($config->key, true);
     }
 
-    public function test_isset_returns_true_for_existing_value() {
+    public function test_isset_returns_true_for_existing_value()
+    {
         $config = new DPSFolioProducer\Config(array(
             'hello' => 'world'
         ));
         $this->assertTrue(isset($config->hello));
     }
 
-    public function test_isset_returns_false_for_nonexistant_value() {
+    public function test_isset_returns_false_for_nonexistant_value()
+    {
         $config = new DPSFolioProducer\Config();
         $this->assertTrue(!isset($config->hello));
     }

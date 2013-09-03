@@ -1,6 +1,7 @@
 <?php
 namespace DPSFolioProducer\Commands;
 
-interface ICommand {
+interface ICommand
+{
     public function execute();
 }
