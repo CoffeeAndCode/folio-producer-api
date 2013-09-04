@@ -1,4 +1,5 @@
 *.phar
+/phpdoc-*
 /config.php
 /coverage/
 /docs/
