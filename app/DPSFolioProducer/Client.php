@@ -1,21 +1,66 @@
 <?php
+/**
+ * Adobe DPS API client library.
+ *
+ * @category  AdobeDPS
+ * @package   DPSFolioProducer
+ * @author    Jonathan Knapp <jon@coffeeandcode.com>
+ * @copyright 2013 Jonathan Knapp
+ * @license   MIT https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE
+ * @version   1.0.0
+ * @link      https://github.com/CoffeeAndCode/folio-producer-api
+ */
 namespace DPSFolioProducer;
 
+/**
+ * Client class that handles communication with the DPS API.
+ *
+ * @category AdobeDPS
+ * @package  DPSFolioProducer
+ * @author   Jonathan Knapp <jon@coffeeandcode.com>
+ * @license  MIT https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE
+ * @version  1.0.0
+ * @link     https://github.com/CoffeeAndCode/folio-producer-api
+ */
 class Client
 {
+    /**
+     * The class configuration object.
+     * @var Config
+     */
     protected $config = null;
+
+    /**
+     * The Folio service for API calls.
+     * @var Folio
+     */
     protected $folio = null;
+
+    /**
+     * THe Session service for API calls.
+     * @var Session
+     */
     protected $session = null;
 
+    /**
+     * Class constructor.
+     *
+     * @param array $config The configuration hash to startup the library.
+     */
     public function __construct($config)
     {
         $this->config = new Config($config);
         $this->folio = new Services\FolioService($this->config);
         $this->session = new Services\SessionService($this->config);
-        $this->sync_session();
+        $this->_syncSession();
     }
 
-    public function create_session()
+    /**
+     * Creates a new session through Adobe's DPS API.
+     *
+     * @return Request|null Returns a request object if the call is made, null otherwise.
+     */
+    public function createSession()
     {
         $request = null;
         if (!isset($this->config->ticket) || !$this->config->ticket) {
@@ -32,13 +77,21 @@ class Client
         return $request;
     }
 
+    /**
+     * Execute an API method utilizing the passed options.
+     *
+     * @param string $command_name The name of the API command to make in snakecase.
+     * @param array  $options      The configuration options to use for the API request.
+     *
+     * @return Request|null Returns a request object if the call is made, null otherwise.
+     */
     public function execute($command_name, $options=array())
     {
-        $command_class = $this->get_command_class($command_name);
+        $command_class = $this->_getCommandClass($command_name);
         $command = new $command_class($options);
 
         if (!isset($this->config->ticket)) {
-            $this->create_session();
+            $this->createSession();
         }
 
         $command->folio = $this->folio;
@@ -46,19 +99,27 @@ class Client
         $request = $command->execute();
 
         // if an InvalidTicket response is returned, reauthenticate and retry
-        if ($request->get_response_code() === 200 &&
-            property_exists($request->response, 'status') &&
-            $request->response->status === 'InvalidTicket' &&
-            !$request->is_retry) {
-            $this->reset();
-            $this->create_session();
+        if ($request->get_response_code() === 200
+            && property_exists($request->response, 'status')
+            && $request->response->status === 'InvalidTicket'
+            && !$request->is_retry
+        ) {
+            $this->_reset();
+            $this->createSession();
             $request->retry();
         }
 
         return $request;
     }
 
-    private function camelize($word)
+    /**
+     * Converts a snakecase string to camelcase.
+     *
+     * @param string $word The string to convert from snake to camelcase.
+     *
+     * @return string
+     */
+    private function _camelize($word)
     {
         $words = explode('_', $word);
         $words = array_map('ucfirst', $words);
@@ -66,12 +127,24 @@ class Client
         return implode('', $words);
     }
 
-    private function get_command_class($command_name)
+    /**
+     * Return the full class name of the requested Command.
+     *
+     * @param string $command_name The requested Command name.
+     *
+     * @return string Return the full class name.
+     */
+    private function _getCommandClass($command_name)
     {
-        return '\\DPSFolioProducer\\Commands\\'.$this->camelize($command_name);
+        return '\\DPSFolioProducer\\Commands\\'.$this->_camelize($command_name);
     }
 
-    private function reset()
+    /**
+     * Reset the object's properties as if it was not used.
+     *
+     * @return void
+     */
+    private function _reset()
     {
         $this->config->request_server = null;
         $this->config->ticket = null;
@@ -81,7 +154,12 @@ class Client
         }
     }
 
-    private function sync_session()
+    /**
+     * Sets class variables based on session variables if they are set.
+     *
+     * @return null
+     */
+    private function _syncSession()
     {
         if (session_id()) {
             if (isset($_SESSION) && isset($_SESSION['download_ticket'])) {

@@ -12,9 +12,9 @@ class ClientTestWrapper extends DPSFolioProducer\Client
     public $request_server;
     public $session;
     public $ticket;
-    public function get_command_class($command_name)
+    public function getCommandClass($command_name)
     {
-        parent::get_command_class($command_name);
+        parent::getCommandClass($command_name);
     }
 }
 
@@ -90,8 +90,8 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 ->method('create')
                 ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
         $client->session = $session;
-        $client->create_session();
-        $client->create_session();
+        $client->createSession();
+        $client->createSession();
     }
 
     public function test_stores_ticket_after_create_session_call()
@@ -102,7 +102,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 ->method('create')
                 ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
         $client->session = $session;
-        $client->create_session();
+        $client->createSession();
         $this->assertEquals($client->config->ticket, '1234');
     }
 
@@ -114,7 +114,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
                 ->method('create')
                 ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
         $client->session = $session;
-        $client->create_session();
+        $client->createSession();
         $this->assertEquals($client->config->request_server, 'http://example.com');
     }
 
