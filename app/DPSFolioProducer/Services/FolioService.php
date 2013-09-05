@@ -55,7 +55,7 @@ class FolioService extends Service
     }
 
     public function create_article($data) {
-        $folioID = 'EcL8-NIzo0i0yezT0hn_CQ';
+        $folioID = 'iFIGh5aFfFPTnnZHoRc_Lw';
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header()
