@@ -96,7 +96,7 @@ class Client
 
         $command->folio = $this->folio;
         $command->session = $this->session;
-        $request = $command->execute();
+        $request = $command->execute($options);
 
         // if an InvalidTicket response is returned, reauthenticate and retry
         if ($request->get_response_code() === 200

@@ -6,13 +6,13 @@ include 'config.php';
 
 if (!isset($config)) { user_error('Missing configuration.'); }
 $client = new DPSFolioProducer\Client($config);
-$request = $client->execute('get_folio_metadata');
+// $request = $client->execute('get_folio_metadata');
 
-echo '<h1>Folios</h1>';
-foreach ($request->response->folios as $folio) {
-    print_r($folio);
-    echo '<hr />';
-}
+// echo '<h1>Folios</h1>';
+// foreach ($request->response->folios as $folio) {
+//     print_r($folio);
+//     echo '<hr />';
+// }
 
 // $options = array(
 //     'folioName' => 'Folio Name',
@@ -23,3 +23,8 @@ foreach ($request->response->folios as $folio) {
 // );
 // $request = $client->execute('create_folio', $options);
 // var_dump($request);
+
+echo '<hr />';
+
+$request = $client->execute('create_article');
+var_dump($request);

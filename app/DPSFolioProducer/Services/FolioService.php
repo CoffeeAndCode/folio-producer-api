@@ -49,7 +49,50 @@ class FolioService extends Service
         );
 
         $request = new Request($this->create_url('folios'), $options);
-        $response = $request->run();
+        $request->run();
+
+        return $request;
+    }
+
+    public function create_article($data) {
+        $folioID = 'EcL8-NIzo0i0yezT0hn_CQ';
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        $defaults = array(
+            //'folioName' => null,
+            //'magazineTitle' => null,
+            //'folioNumber' => null,
+            //'folioDescription' => '',
+            //'publicationDate' => null,
+            //'coverDate' => '',
+            //'resolutionWidth' => null,   // 240 - 4095
+            //'resolutionHeight' => null,  // 240 - 4095
+            //'defaultAssetFormat' => 'Auto',
+            //'defaultJPEGQuality' => 'High',
+            //'bindingRight' => false,
+            //'locked' => false,
+            //'folioIntent' => 'Both',
+            //'targetViewer' => 'Unset',
+            //'filters' => '',
+            //'viewer' => ''
+        );
+        $data = array_merge($defaults, $data);
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'POST',
+                //'proxy' => 'tcp://localhost:8888',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios/'.$folioID.'/articles'), $options);
+        $request->run('example.folio');
 
         return $request;
     }

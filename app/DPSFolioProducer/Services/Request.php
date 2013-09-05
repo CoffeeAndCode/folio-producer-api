@@ -15,12 +15,17 @@ class Request
         $this->url = $url;
     }
 
-    public function run()
+    public function run($filename=null)
     {
+        if ($filename) {
+            $this->upload_file($filename);
+        }
         $context = stream_context_create($this->options);
         $response = file_get_contents($this->url, false, $context);
 
-        $this->response_headers = $http_response_header;
+        if (isset($http_response_header)) {
+            $this->response_headers = $http_response_header;
+        }
         $this->response = json_decode($response);
         if ($this->response === null) {
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -42,6 +47,30 @@ class Request
         }
 
         return $response_code;
+    }
+
+    public function upload_file($filename)
+    {
+        $data = '';
+        $handle = fopen($filename, 'rb');
+        fseek($handle, 0);
+        $binary = fread($handle, filesize($filename));
+        fclose($handle);
+
+        $separator = md5(microtime());
+
+        $eol = "\r\n";
+        $data = '';
+        $data .=  '--' . $separator . $eol;
+        $data .='Content-Disposition: form-data; name=""; filename="' . $filename . '"' . $eol;
+        $data .='Content-Type: ' . $eol;
+        $data .='Content-Transfer-Encoding: binary' . $eol . $eol;
+        $data .= $binary . $eol;
+        $data .= '--' . $separator . '--' . $eol;
+
+        array_shift($this->options['http']['header']); // remove Content-Type header
+        array_push($this->options['http']['header'], 'Content-Type: multipart/form-data; boundary='.$separator);
+        $this->options['http']['content'] = $data;
     }
 
     public function retry()
