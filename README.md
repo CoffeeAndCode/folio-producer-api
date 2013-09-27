@@ -1,4 +1,5 @@
 # Folio Producer API
+[![Build Status](https://magnum.travis-ci.com/CoffeeAndCode/folio-producer-api.png?token=PgRq1y9q1wqEUV2w6sXq&branch=master)](https://magnum.travis-ci.com/CoffeeAndCode/folio-producer-api)
 
 ### Requirements
 
