@@ -55,6 +55,11 @@ calls.
     $request = $client->execute('delete_folio', array('folio_id' => $folio_id_to_delete));
 
 
+### Duplicate a Folio
+
+    $request = $client->execute('duplicate_folio', array('folio_id' => $folio_id));
+
+
 ### Create an Article
 
     $request = $client->execute('create_article');

@@ -153,8 +153,28 @@ class FolioService extends Service
     {
     }
 
-    public function duplicate($folio_id)
+    public function duplicate_folio($data)
     {
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'content' => '',
+                'header'  => $headers,
+                'method'  => 'POST',
+                'protocol_version' => 1.1
+            )
+        );
+        array_push($options['http']['header'], 'Content-Length: '.strlen($options['http']['content']));
+
+        $request = new Request($this->create_url('folios/'.$data['folio_id'].'/duplicate'), $options);
+        $request->run();
+
+        return $request;
     }
 
     public function get_articles($folio_id)
