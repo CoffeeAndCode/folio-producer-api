@@ -97,8 +97,26 @@ class FolioService extends Service
         return $request;
     }
 
-    public function delete($folio_id)
+    public function delete($data)
     {
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'DELETE',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios/'.$data['folio_id']), $options);
+        $request->run();
+
+        return $request;
     }
 
     public function delete_article($folio_id, $article_id)
