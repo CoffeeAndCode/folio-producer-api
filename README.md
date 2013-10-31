@@ -60,6 +60,14 @@ calls.
     $request = $client->execute('create_article');
 
 
+### Delete an Article
+
+    $request = $client->execute('delete_article', array(
+        'article_id' => $article_id,
+        'folio_id' => $folio_id
+    ));
+
+
 ## Testing
 
 PHPUnit is brought into the project with Composer which requires PHP 5.3.2+ to run.

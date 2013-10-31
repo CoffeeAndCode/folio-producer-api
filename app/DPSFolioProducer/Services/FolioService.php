@@ -55,7 +55,7 @@ class FolioService extends Service
     }
 
     public function create_article($data) {
-        $folioID = 'iFIGh5aFfFPTnnZHoRc_Lw';
+        $folioID = $data['folio_id'];
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header()
@@ -119,8 +119,26 @@ class FolioService extends Service
         return $request;
     }
 
-    public function delete_article($folio_id, $article_id)
+    public function delete_article($data)
     {
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'DELETE',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios/'.$data['folio_id'].'/articles/'.$data['article_id']), $options);
+        $request->run();
+
+        return $request;
     }
 
     public function delete_html_resources($folio_id)
