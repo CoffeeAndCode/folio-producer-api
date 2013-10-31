@@ -60,6 +60,14 @@ calls.
     $request = $client->execute('duplicate_folio', array('folio_id' => $folio_id));
 
 
+### Update a Folio
+
+    $request = $client->execute('update_folio', array(
+        'folio_id' => $folio_id,
+        'folioName' => 'Updated Folio Name'
+    ));
+
+
 ### Create an Article
 
     $request = $client->execute('create_article');

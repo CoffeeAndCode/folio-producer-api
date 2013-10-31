@@ -207,8 +207,44 @@ class FolioService extends Service
         return $request;
     }
 
-    public function update($folio_id)
+    public function update($data)
     {
+        $folioID = $data['folio_id'];
+        unset($data['folio_id']);
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        $defaults = array(
+            //'folioName' => null,
+            //'magazineTitle' => null,
+            //'folioNumber' => null,
+            //'folioDescription' => '',
+            //'publicationDate' => null,
+            //'coverDate' => '',
+            //'bindingRight' => false,
+            //'locked' => false,
+            //'targetViewer' => 'Unset',
+            //'filters' => '',
+            //'viewer' => ''
+        );
+        $data = array_merge($defaults, $data);
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'POST',
+                'content' => json_encode($data),
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios').'/'.$folioID, $options);
+        $request->run();
+
+        return $request;
     }
 
     public function update_article_metadata($folio_id, $article_id)
