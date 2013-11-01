@@ -12,16 +12,23 @@ class CommandTestExample extends DPSFolioProducer\Commands\Command
 
 class CommandTest extends PHPUnit_Framework_TestCase
 {
+    protected $config;
+
+    protected function setUp()
+    {
+        $this->config = array();
+    }
+
     public function test_command_class_impliments_icommand()
     {
-        $class = new CommandTestExample();
+        $class = new CommandTestExample($this->config);
         $this->assertTrue($class instanceof DPSFolioProducer\Commands\ICommand);
     }
 
     public function test_stores_passed_options()
     {
         $options = array('hello' => 'world');
-        $class = new CommandTestExample($options);
+        $class = new CommandTestExample($this->config, $options);
         $this->assertEquals($class->options, $options);
         $options['hello'] = 'universe';
         $this->assertNotEquals($class->options, $options);
