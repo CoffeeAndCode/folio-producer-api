@@ -106,6 +106,13 @@ calls.
     ));
 
 
+### Delete HTML Resources
+
+    $request = $client->execute('delete_html_resources', array(
+        'folio_id' => $folio_id
+    ));
+
+
 ### Create an Article
 
     $request = $client->execute('create_article');
