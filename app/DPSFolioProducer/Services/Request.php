@@ -62,8 +62,17 @@ class Request
         $eol = "\r\n";
         $data = '';
         $data .=  '--' . $separator . $eol;
-        $data .='Content-Disposition: form-data; name=""; filename="' . $filename . '"' . $eol;
-        $data .='Content-Transfer-Encoding: binary' . $eol . $eol;
+
+        if (array_key_exists('content', $this->options['http'])) {
+            $data .= 'Content-Disposition: form-data; name="request"' . $eol;
+            $data .= 'Content-Type: text/plain; charset=UTF-8' . $eol;
+            $data .= 'Content-Transfer-Encoding: 8bit' . $eol . $eol;
+            $data .= $this->options['http']['content'] . $eol;
+            $data .=  '--' . $separator . $eol;
+        }
+
+        $data .= 'Content-Disposition: form-data; name=""; filename="' . $filename . '"' . $eol;
+        $data .= 'Content-Transfer-Encoding: binary' . $eol . $eol;
         $data .= $binary . $eol;
         $data .= '--' . $separator . '--' . $eol;
 
