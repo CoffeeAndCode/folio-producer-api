@@ -155,6 +155,8 @@ class Client
      */
     private function _reset()
     {
+        $this->config->download_server = null;
+        $this->config->download_ticket = null;
         $this->config->request_server = null;
         $this->config->ticket = null;
 
