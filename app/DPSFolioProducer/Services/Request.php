@@ -63,13 +63,21 @@ class Request
         $data = '';
         $data .=  '--' . $separator . $eol;
         $data .='Content-Disposition: form-data; name=""; filename="' . $filename . '"' . $eol;
-        $data .='Content-Type: ' . $eol;
         $data .='Content-Transfer-Encoding: binary' . $eol . $eol;
         $data .= $binary . $eol;
         $data .= '--' . $separator . '--' . $eol;
 
-        array_shift($this->options['http']['header']); // remove Content-Type header
-        array_push($this->options['http']['header'], 'Content-Type: multipart/form-data; boundary='.$separator);
+        $this->replace_content_type_header('Content-Type: multipart/form-data; boundary='.$separator);
         $this->options['http']['content'] = $data;
+    }
+
+    private function replace_content_type_header($new_header)
+    {
+        $this->options['http']['header'] = array_map(function ($header) use ($new_header) {
+            if (preg_match('/^Content\-Type:/i', $header)) {
+                return $new_header;
+            }
+            return $header;
+        }, $this->options['http']['header']);
     }
 }
