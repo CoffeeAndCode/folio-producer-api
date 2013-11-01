@@ -365,6 +365,31 @@ class FolioService extends Service
         return $request;
     }
 
+    public function delete_folio_preview_image($data)
+    {
+        $folio_id = $data['folio_id'];
+        $orientation = $data['orientation'];
+
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'DELETE',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios/'.$folio_id.'/previews/'.$orientation), $options);
+        $request->run();
+
+        return $request;
+    }
+
     public function download_folio_preview_image($data)
     {
         $folio_id = $data['folio_id'];
