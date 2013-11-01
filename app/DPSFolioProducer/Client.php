@@ -65,10 +65,14 @@ class Client
         $request = null;
         if (!isset($this->config->ticket) || !$this->config->ticket) {
             $request = $this->session->create();
+            $this->config->download_server = $request->response->downloadServer;
+            $this->config->download_ticket = $request->response->downloadTicket;
             $this->config->request_server = $request->response->server;
             $this->config->ticket = $request->response->ticket;
 
             if (session_id()) {
+                $_SESSION['download_server'] = $this->config->download_server;
+                $_SESSION['download_ticket'] = $this->config->download_ticket;
                 $_SESSION['request_server'] = $this->config->request_server;
                 $_SESSION['ticket'] = $this->config->ticket;
             }
@@ -162,6 +166,10 @@ class Client
     private function _syncSession()
     {
         if (session_id()) {
+            if (isset($_SESSION) && isset($_SESSION['download_server'])) {
+                $this->config->download_server = $_SESSION['download_server'];
+            }
+
             if (isset($_SESSION) && isset($_SESSION['download_ticket'])) {
                 $this->config->download_ticket = $_SESSION['download_ticket'];
             }

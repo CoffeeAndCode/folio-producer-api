@@ -26,11 +26,16 @@ class Request
         if (isset($http_response_header)) {
             $this->response_headers = $http_response_header;
         }
-        $this->response = json_decode($response);
-        if ($this->response === null) {
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                user_error(json_last_error());
+
+        if ($this->responseContentType() == 'application/json') {
+            $this->response = json_decode($response);
+            if ($this->response === null) {
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    user_error(json_last_error());
+                }
             }
+        } else {
+            $this->response = $response;
         }
 
         return $this->response;
@@ -88,5 +93,18 @@ class Request
             }
             return $header;
         }, $this->options['http']['header']);
+    }
+
+    private function responseContentType()
+    {
+        $contentType = null;
+        if ($this->response_headers && count($this->response_headers)) {
+            foreach($this->response_headers as $header) {
+                if (preg_match('/^Content\-Type:\s*(.*);/i', $header, $matches)) {
+                    $contentType = $matches[1];
+                }
+            }
+        }
+        return $contentType;
     }
 }

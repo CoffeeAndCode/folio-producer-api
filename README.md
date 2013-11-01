@@ -83,6 +83,14 @@ calls.
     ));
 
 
+### Download Folio Preview Image
+
+    $request = $client->execute('download_folio_preview_image', array(
+        'folio_id' => $folio_id,
+        'orientation' => 'landscape' // or 'portrait'
+    ));
+
+
 ### Create an Article
 
     $request = $client->execute('create_article');

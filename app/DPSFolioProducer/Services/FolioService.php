@@ -149,10 +149,6 @@ class FolioService extends Service
     {
     }
 
-    public function download_folio_preview_image($folio_id, $orientation)
-    {
-    }
-
     public function duplicate_folio($data)
     {
         $headers = array(
@@ -356,7 +352,7 @@ class FolioService extends Service
         // use key 'http' even if you send the request to https://...
         $options = array(
             'http' => array(
-                'content' => json_encode(array('fileName' => 'example.png')),
+                'content' => json_encode(array('fileName' => 'image.png')),
                 'header'  => $headers,
                 'method'  => 'POST',
                 'protocol_version' => 1.1
@@ -365,6 +361,31 @@ class FolioService extends Service
 
         $request = new Request($this->create_url('folios/'.$folio_id.'/previews/'.$orientation), $options);
         $request->run('image.png');
+
+        return $request;
+    }
+
+    public function download_folio_preview_image($data)
+    {
+        $folio_id = $data['folio_id'];
+        $orientation = $data['orientation'];
+
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_download_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'GET',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_download_url('folios/'.$folio_id.'/previews/'.$orientation), $options);
+        $request->run();
 
         return $request;
     }
