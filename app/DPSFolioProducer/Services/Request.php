@@ -72,12 +72,4 @@ class Request
         array_push($this->options['http']['header'], 'Content-Type: multipart/form-data; boundary='.$separator);
         $this->options['http']['content'] = $data;
     }
-
-    public function retry()
-    {
-        $this->response_headers = null;
-        $this->response = null;
-        $this->is_retry = true;
-        $this->run();
-    }
 }

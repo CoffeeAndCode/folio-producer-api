@@ -88,7 +88,7 @@ class Client
     public function execute($command_name, $options=array())
     {
         $command_class = $this->_getCommandClass($command_name);
-        $command = new $command_class($options);
+        $command = new $command_class($this->config, $options);
 
         if (!isset($this->config->ticket)) {
             $this->createSession();
@@ -96,17 +96,17 @@ class Client
 
         $command->folio = $this->folio;
         $command->session = $this->session;
-        $request = $command->execute($options);
+        $request = $command->execute();
 
         // if an InvalidTicket response is returned, reauthenticate and retry
         if ($request->get_response_code() === 200
             && property_exists($request->response, 'status')
             && $request->response->status === 'InvalidTicket'
-            && !$request->is_retry
+            && !$command->is_retry
         ) {
             $this->_reset();
             $this->createSession();
-            $request->retry();
+            $request = $command->retry();
         }
 
         return $request;
