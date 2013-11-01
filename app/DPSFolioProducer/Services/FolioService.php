@@ -415,7 +415,27 @@ class FolioService extends Service
         return $request;
     }
 
-    public function upload_html_resources($folio_id)
+    public function upload_html_resources($data)
     {
+        $folio_id = $data['folio_id'];
+
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'POST',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios/'.$folio_id.'/htmlresources'), $options);
+        $request->run('HTMLResources.zip');
+
+        return $request;
     }
 }

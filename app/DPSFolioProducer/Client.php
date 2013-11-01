@@ -126,7 +126,12 @@ class Client
     private function _camelize($word)
     {
         $words = explode('_', $word);
-        $words = array_map('ucfirst', $words);
+        $words = array_map(function ($word) {
+            if (in_array($word, array('api', 'html'))) {
+                return strtoupper($word);
+            }
+            return ucfirst($word);
+        }, $words);
 
         return implode('', $words);
     }
