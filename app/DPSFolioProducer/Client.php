@@ -113,6 +113,24 @@ class Client
             $request = $command->retry();
         }
 
+        // 10 min before tickets expire, new ones are sent with every
+        // API call that returns json
+        if ($request && property_exists($request, 'response')) {
+            if (property_exists($request->response, 'ticket')) {
+                $this->config->ticket = $request->response->ticket;
+                if (session_id()) {
+                    $_SESSION['ticket'] = $this->config->ticket;
+                }
+            }
+
+            if (property_exists($request->response, 'downloadTicket')) {
+                $this->config->download_ticket = $request->response->downloadTicket;
+                if (session_id()) {
+                    $_SESSION['download_ticket'] = $this->config->download_ticket;
+                }
+            }
+        }
+
         return $request;
     }
 
