@@ -88,7 +88,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $session = $this->getMock('Session', array('create'));
         $session->expects($this->once())
                 ->method('create')
-                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
+                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com", "downloadServer": "http://example.com/downloads", "downloadTicket": "abcd"}}')));
         $client->session = $session;
         $client->createSession();
         $client->createSession();
@@ -100,7 +100,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $session = $this->getMock('Session', array('create'));
         $session->expects($this->once())
                 ->method('create')
-                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
+                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com", "downloadServer": "http://example.com/downloads", "downloadTicket": "abcd"}}')));
         $client->session = $session;
         $client->createSession();
         $this->assertEquals($client->config->ticket, '1234');
@@ -112,7 +112,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $session = $this->getMock('Session', array('create'));
         $session->expects($this->once())
                 ->method('create')
-                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com"}}')));
+                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com", "downloadServer": "http://example.com/downloads", "downloadTicket": "abcd"}}')));
         $client->session = $session;
         $client->createSession();
         $this->assertEquals($client->config->request_server, 'http://example.com');
