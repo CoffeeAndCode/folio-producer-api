@@ -29,13 +29,20 @@ calls.
 
 ### Get All Folio Metadata
 
-    $request = $client->execute('get_folio_metadata');
+    $request = $client->execute('get_folios_metadata');
 
     echo '<h1>Folios</h1>';
     foreach ($request->response->folios as $folio) {
         print_r($folio);
         echo '<hr />';
     }
+
+
+### Get Specific Folio Metadata
+
+    $request = $client->execute('get_folio_metadata', array(
+        'folio_id' => $folio_id
+    ));
 
 
 ### Create a Folio
@@ -87,6 +94,13 @@ calls.
         'article_id' => $article_id,
         'folio_id' => $folio_id,
         'description' => 'My new description.'
+    ));
+
+
+### Get All Article Metadata
+
+    $request = $client->execute('get_articles_metadata', array(
+        'folio_id' => $folio_id
     ));
 
 

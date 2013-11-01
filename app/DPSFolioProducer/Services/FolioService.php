@@ -181,28 +181,47 @@ class FolioService extends Service
     {
     }
 
-    public function get_folio_metadata($folio_id=null)
+    public function get_folio_metadata($data)
     {
-        $response = null;
-        if ($folio_id === null) {
-            $headers = array(
-                'Content-Type: application/json; charset=utf-8',
-                $this->auth_header()
-            );
+        $folio_id = $data['folio_id'];
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
 
-            // use key 'http' even if you send the request to https://...
-            $options = array(
-                'http' => array(
-                    'header'  => $headers,
-                    'method'  => 'GET',
-                    //'proxy' => 'tcp://localhost:8888',
-                    'protocol_version' => 1.1
-                )
-            );
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'GET',
+                'protocol_version' => 1.1
+            )
+        );
 
-            $request = new Request($this->create_url('folios'), $options);
-            $response = $request->run();
-        }
+        $request = new Request($this->create_url('folios/'.$folio_id), $options);
+        $request->run();
+
+        return $request;
+    }
+
+    public function get_folios_metadata()
+    {
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'GET',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios'), $options);
+        $request->run();
 
         return $request;
     }
@@ -242,6 +261,28 @@ class FolioService extends Service
         );
 
         $request = new Request($this->create_url('folios').'/'.$folioID, $options);
+        $request->run();
+
+        return $request;
+    }
+
+    public function get_articles_metadata($data) {
+        $folio_id = $data['folio_id'];
+        $headers = array(
+            'Content-Type: application/json; charset=utf-8',
+            $this->auth_header()
+        );
+
+        // use key 'http' even if you send the request to https://...
+        $options = array(
+            'http' => array(
+                'header'  => $headers,
+                'method'  => 'GET',
+                'protocol_version' => 1.1
+            )
+        );
+
+        $request = new Request($this->create_url('folios/'.$folio_id.'/articles'), $options);
         $request->run();
 
         return $request;
