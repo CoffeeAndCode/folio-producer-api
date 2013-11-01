@@ -56,6 +56,7 @@ class FolioService extends Service
 
     public function create_article($data) {
         $folioID = $data['folio_id'];
+        $filepath = $data['filepath'];
         $headers = array(
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header()
@@ -92,7 +93,7 @@ class FolioService extends Service
         );
 
         $request = new Request($this->create_url('folios/'.$folioID.'/articles'), $options);
-        $request->run('example.folio');
+        $request->run($filepath);
 
         return $request;
     }
@@ -332,6 +333,7 @@ class FolioService extends Service
 
     public function upload_folio_preview_image($data)
     {
+        $filepath = $data['filepath'];
         $folio_id = $data['folio_id'];
         $orientation = $data['orientation'];
 
@@ -356,7 +358,7 @@ class FolioService extends Service
         );
 
         $request = new Request($this->create_url('folios/'.$folio_id.'/previews/'.$orientation), $options);
-        $request->run('image.png');
+        $request->run($filepath);
 
         return $request;
     }
@@ -413,6 +415,7 @@ class FolioService extends Service
 
     public function upload_html_resources($data)
     {
+        $filepath = $data['filepath'];
         $folio_id = $data['folio_id'];
 
         $headers = array(
@@ -430,7 +433,7 @@ class FolioService extends Service
         );
 
         $request = new Request($this->create_url('folios/'.$folio_id.'/htmlresources'), $options);
-        $request->run('HTMLResources.zip');
+        $request->run($filepath);
 
         return $request;
     }

@@ -59,12 +59,16 @@ calls.
 
 ### Delete a Folio
 
-    $request = $client->execute('delete_folio', array('folio_id' => $folio_id_to_delete));
+    $request = $client->execute('delete_folio', array(
+        'folio_id' => $folio_id
+    ));
 
 
 ### Duplicate a Folio
 
-    $request = $client->execute('duplicate_folio', array('folio_id' => $folio_id));
+    $request = $client->execute('duplicate_folio', array(
+        'folio_id' => $folio_id
+    ));
 
 
 ### Update a Folio
@@ -78,6 +82,7 @@ calls.
 ### Upload Folio Preview Image
 
     $request = $client->execute('upload_folio_preview_image', array(
+        'filepath' => 'images/folio image.jpg',
         'folio_id' => $folio_id,
         'orientation' => 'landscape' // or 'portrait'
     ));
@@ -102,6 +107,7 @@ calls.
 ### Upload HTML Resources
 
     $request = $client->execute('upload_html_resources', array(
+        'filepath' => 'data/HTMLResources.zip',
         'folio_id' => $folio_id
     ));
 
@@ -115,7 +121,10 @@ calls.
 
 ### Create an Article
 
-    $request = $client->execute('create_article');
+    $request = $client->execute('create_article', array(
+        'filepath' => 'data/example.folio',
+        'folio_id' => $folio_id
+    ));
 
 
 ### Delete an Article
