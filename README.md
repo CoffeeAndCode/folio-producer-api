@@ -81,6 +81,15 @@ calls.
     ));
 
 
+### Update Article Metadata
+
+    $request = $client->execute('update_article_metadata', array(
+        'article_id' => $article_id,
+        'folio_id' => $folio_id,
+        'description' => 'My new description.'
+    ));
+
+
 ## Testing
 
 PHPUnit is brought into the project with Composer which requires PHP 5.3.2+ to run.
