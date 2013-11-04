@@ -265,12 +265,18 @@ class FolioService extends Service
             'Content-Type: application/json; charset=utf-8',
             $this->auth_header()
         );
-
+        
+        $defaults = array(
+            //"resultData" => "All" //Core (the default), Head, and All
+        );
+        $data = array_merge($defaults, $data);
+        
         // use key 'http' even if you send the request to https://...
         $options = array(
             'http' => array(
                 'header'  => $headers,
                 'method'  => 'GET',
+                'content' => json_encode($data),
                 'protocol_version' => 1.1
             )
         );
