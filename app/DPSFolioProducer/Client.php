@@ -65,16 +65,19 @@ class Client
         $request = null;
         if (!isset($this->config->ticket) || !$this->config->ticket) {
             $request = $this->session->create();
-            $this->config->download_server = $request->response->downloadServer;
-            $this->config->download_ticket = $request->response->downloadTicket;
-            $this->config->request_server = $request->response->server;
-            $this->config->ticket = $request->response->ticket;
 
-            if (session_id()) {
-                $_SESSION['download_server'] = $this->config->download_server;
-                $_SESSION['download_ticket'] = $this->config->download_ticket;
-                $_SESSION['request_server'] = $this->config->request_server;
-                $_SESSION['ticket'] = $this->config->ticket;
+            if ($request->response->status === 'ok') {
+                $this->config->download_server = $request->response->downloadServer;
+                $this->config->download_ticket = $request->response->downloadTicket;
+                $this->config->request_server = $request->response->server;
+                $this->config->ticket = $request->response->ticket;
+
+                if (session_id()) {
+                    $_SESSION['download_server'] = $this->config->download_server;
+                    $_SESSION['download_ticket'] = $this->config->download_ticket;
+                    $_SESSION['request_server'] = $this->config->request_server;
+                    $_SESSION['ticket'] = $this->config->ticket;
+                }
             }
         }
 
@@ -103,7 +106,7 @@ class Client
         $request = $command->execute();
 
         // if an InvalidTicket response is returned, reauthenticate and retry
-        if ($request->get_response_code() === 200
+        if ($request && $request->get_response_code() === 200
             && property_exists($request->response, 'status')
             && $request->response->status === 'InvalidTicket'
             && !$command->is_retry
@@ -161,7 +164,7 @@ class Client
      *
      * @return string Return the full class name.
      */
-    private function _getCommandClass($command_name)
+    public function _getCommandClass($command_name)
     {
         return '\\DPSFolioProducer\\Commands\\'.$this->_camelize($command_name);
     }

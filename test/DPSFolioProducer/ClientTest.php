@@ -12,9 +12,9 @@ class ClientTestWrapper extends DPSFolioProducer\Client
     public $request_server;
     public $session;
     public $ticket;
-    public function getCommandClass($command_name)
+    public function _getCommandClass($command_name)
     {
-        parent::getCommandClass($command_name);
+        return 'ClientTestCommand';
     }
 }
 
@@ -25,6 +25,19 @@ class ClientTestCommand extends DPSFolioProducer\Commands\Command
 
 class ClientTest extends PHPUnit_Framework_TestCase
 {
+    private $createSessionResponse =
+<<<'EOT'
+    {
+        "response": {
+            "downloadServer": "http://example.com/downloads",
+            "downloadTicket": "abcd",
+            "server": "http://example.com",
+            "status": "ok",
+            "ticket": "1234"
+        }
+    }
+EOT;
+
     private $test_config = array(
         'api_server' => 'https://dpsapi2.acrobat.com',
         'company' => '',
@@ -38,6 +51,13 @@ class ClientTest extends PHPUnit_Framework_TestCase
     public function tearDown()
     {
         m::close();
+    }
+
+    protected static function unlockMethod($name) {
+        $class = new ReflectionClass('MyClass');
+        $method = $class->getMethod($name);
+        $method->setAccessible(true);
+        return $method;
     }
 
     /**
@@ -88,7 +108,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $session = $this->getMock('Session', array('create'));
         $session->expects($this->once())
                 ->method('create')
-                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com", "downloadServer": "http://example.com/downloads", "downloadTicket": "abcd"}}')));
+                ->will($this->returnValue(json_decode($this->createSessionResponse)));
         $client->session = $session;
         $client->createSession();
         $client->createSession();
@@ -100,7 +120,7 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $session = $this->getMock('Session', array('create'));
         $session->expects($this->once())
                 ->method('create')
-                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com", "downloadServer": "http://example.com/downloads", "downloadTicket": "abcd"}}')));
+                ->will($this->returnValue(json_decode($this->createSessionResponse)));
         $client->session = $session;
         $client->createSession();
         $this->assertEquals($client->config->ticket, '1234');
@@ -112,13 +132,22 @@ class ClientTest extends PHPUnit_Framework_TestCase
         $session = $this->getMock('Session', array('create'));
         $session->expects($this->once())
                 ->method('create')
-                ->will($this->returnValue(json_decode('{"response": {"ticket": "1234", "server": "http://example.com", "downloadServer": "http://example.com/downloads", "downloadTicket": "abcd"}}')));
+                ->will($this->returnValue(json_decode($this->createSessionResponse)));
         $client->session = $session;
         $client->createSession();
         $this->assertEquals($client->config->request_server, 'http://example.com');
     }
 
-    public function test_execute_will_call_create_session_if_ticket_does_not_exist() {}
+    public function test_execute_will_call_create_session_if_ticket_does_not_exist() {
+        $client = new ClientTestWrapper($this->test_config);
+        $session = $this->getMock('Session', array('create'));
+        $session->expects($this->once())
+                ->method('create')
+                ->will($this->returnValue(json_decode($this->createSessionResponse)));
+        $client->session = $session;
+        $client->execute('get_folios_metadata');
+    }
+
     public function test_execute_will_not_call_create_session_if_ticket_exists() {}
     public function test_execute_will_retry_original_request_if_ticket_is_expired() {}
 }
