@@ -4,8 +4,10 @@
 
 ## Requirements
 
-This project uses [PHP namespaces](http://www.php.net/manual/en/language.namespaces.rationale.php)
-which require version 5.3.0+. It is highly recommended to use
+This project requires PHP 5.3.3+.
+
+It uses [PHP namespaces](http://www.php.net/manual/en/language.namespaces.rationale.php)
+which require version 5.3+. It is highly recommended to use
 [PHP Sessions](http://www.php.net/manual/en/book.session.php) as
 well so that we can re-use API authentication tokens instead of requesting
 a new one for each page request. By simply calling `session_start()`, this
