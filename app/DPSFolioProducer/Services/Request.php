@@ -21,7 +21,10 @@ class Request
             $this->upload_file($filename);
         }
         $context = stream_context_create($this->options);
-        $response = file_get_contents($this->url, false, $context);
+        $response = @file_get_contents($this->url, false, $context);
+        if ($response === false) {
+            $response = (object) array('error' => isset($php_errormsg) ? $php_errormsg : 'Error retrieving url: '.$this->url);
+        }
 
         if (isset($http_response_header)) {
             $this->response_headers = $http_response_header;
