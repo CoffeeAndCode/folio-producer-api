@@ -57,12 +57,17 @@ class Request
         return $response_code;
     }
 
-    public function upload_file($filename)
+    public function upload_file($filepath)
     {
+        if (!is_file($filepath)) {
+            throw new Exception('File cannot be uploaded: '.$filepath);
+        }
+
+        $filename = pathinfo($filepath, PATHINFO_BASENAME);
         $data = '';
-        $handle = fopen($filename, 'rb');
+        $handle = fopen($filepath, 'rb');
         fseek($handle, 0);
-        $binary = fread($handle, filesize($filename));
+        $binary = fread($handle, filesize($filepath));
         fclose($handle);
 
         $separator = md5(microtime());
