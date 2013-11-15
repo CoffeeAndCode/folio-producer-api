@@ -5,6 +5,15 @@ class DownloadFolioPreviewImage extends Command
 {
     public function execute()
     {
-        return $this->folio->download_folio_preview_image($this->options);
+        $folioID = $this->options['folio_id'];
+        $orientation = $this->options['orientation'];
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/previews/'.$orientation, $this->config,
+            array(
+                'type' => 'get',
+                'urlType' => 'download'
+            )
+        );
+
+        return $request->run();
     }
 }

@@ -5,6 +5,14 @@ class UploadHTMLResources extends Command
 {
     public function execute()
     {
-        return $this->folio->upload_html_resources($this->options);
+        $folioID = $this->options['folio_id'];
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/htmlresources', $this->config,
+            array(
+                'file' => $this->options['filepath'],
+                'type' => 'post'
+            )
+        );
+
+        return $request->run();
     }
 }

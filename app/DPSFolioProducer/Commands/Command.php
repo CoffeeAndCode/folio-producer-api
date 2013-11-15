@@ -3,7 +3,6 @@ namespace DPSFolioProducer\Commands;
 
 abstract class Command implements ICommand
 {
-    public $folio;
     public $is_retry;
     public $session;
 

@@ -31,12 +31,6 @@ class Client
     protected $config = null;
 
     /**
-     * The Folio service for API calls.
-     * @var Folio
-     */
-    protected $folio = null;
-
-    /**
      * THe Session service for API calls.
      * @var Session
      */
@@ -50,7 +44,6 @@ class Client
     public function __construct($config)
     {
         $this->config = new Config($config);
-        $this->folio = new Services\FolioService($this->config);
         $this->session = new Services\SessionService($this->config);
     }
 
@@ -93,7 +86,6 @@ class Client
             $this->createSession();
         }
 
-        $command->folio = $this->folio;
         $command->session = $this->session;
         $request = $command->execute();
 

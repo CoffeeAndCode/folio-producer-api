@@ -31,6 +31,17 @@ class CreateArticle extends Command
      */
     public function execute()
     {
-        return $this->folio->create_article($this->options);
+        $data = $this->options;
+        $filepath = $data['filepath'];
+        $folioID = $data['folio_id'];
+
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles', $this->config,
+            array(
+                'file' => $filepath,
+                'type' => 'post'
+            )
+        );
+
+        return $request->run();
     }
 }

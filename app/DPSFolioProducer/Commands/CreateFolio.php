@@ -5,6 +5,13 @@ class CreateFolio extends Command
 {
     public function execute()
     {
-        return $this->folio->create($this->options);
+        $request = new \DPSFolioProducer\APIRequest('folios', $this->config,
+            array(
+                'data' => json_encode($this->options),
+                'type' => 'post'
+            )
+        );
+
+        return $request->run();
     }
 }

@@ -5,6 +5,14 @@ class DeleteArticle extends Command
 {
     public function execute()
     {
-        return $this->folio->delete_article($this->options);
+        $articleID = $this->options['article_id'];
+        $folioID = $this->options['folio_id'];
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles/'.$articleID, $this->config,
+            array(
+                'type' => 'delete'
+            )
+        );
+
+        return $request->run();
     }
 }

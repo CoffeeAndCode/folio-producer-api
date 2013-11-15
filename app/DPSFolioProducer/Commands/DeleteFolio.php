@@ -5,6 +5,13 @@ class DeleteFolio extends Command
 {
     public function execute()
     {
-        return $this->folio->delete($this->options);
+        $folioID = $this->options['folio_id'];
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID, $this->config,
+            array(
+                'type' => 'delete'
+            )
+        );
+
+        return $request->run();
     }
 }

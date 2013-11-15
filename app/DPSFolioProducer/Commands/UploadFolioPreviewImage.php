@@ -5,6 +5,17 @@ class UploadFolioPreviewImage extends Command
 {
     public function execute()
     {
-        return $this->folio->upload_folio_preview_image($this->options);
+        $filepath = $this->options['filepath'];
+        $folioID = $this->options['folio_id'];
+        $orientation = $this->options['orientation'];
+
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/previews/'.$orientation, $this->config,
+            array(
+                'data' => json_encode(array('fileName' => pathinfo($filepath, PATHINFO_BASENAME))),
+                'file' => $filepath,
+                'type' => 'post'
+            )
+        );
+        return $request->run();
     }
 }

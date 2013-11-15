@@ -5,6 +5,16 @@ class UpdateFolio extends Command
 {
     public function execute()
     {
-        return $this->folio->update($this->options);
+        $folioID = $this->options['folio_id'];
+        $data = $this->options;
+        unset($data['folio_id']);
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID, $this->config,
+            array(
+                'data' => json_encode($data),
+                'type' => 'post'
+            )
+        );
+
+        return $request->run();
     }
 }

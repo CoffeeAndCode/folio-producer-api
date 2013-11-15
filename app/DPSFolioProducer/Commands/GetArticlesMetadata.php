@@ -5,6 +5,16 @@ class GetArticlesMetadata extends Command
 {
     public function execute()
     {
-        return $this->folio->get_articles_metadata($this->options);
+        $data = $this->options;
+        $folioID = $this->options['folio_id'];
+        unset($data['folio_id']);
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles', $this->config,
+            array(
+                'content' => json_encode($data),
+                'type' => 'get'
+            )
+        );
+
+        return $request->run();
     }
 }

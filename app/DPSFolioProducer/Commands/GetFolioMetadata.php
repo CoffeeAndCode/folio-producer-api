@@ -5,6 +5,13 @@ class GetFolioMetadata extends Command
 {
     public function execute()
     {
-        return $this->folio->get_folio_metadata($this->options);
+        $folioID = $this->options['folio_id'];
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID, $this->config,
+            array(
+                'type' => 'get'
+            )
+        );
+
+        return $request->run();
     }
 }

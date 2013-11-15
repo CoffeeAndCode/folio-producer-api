@@ -3,7 +3,6 @@ namespace DPSFolioProducer\Services;
 
 class Request
 {
-    public $is_retry = false;
     public $options = null;
     public $response_headers = array();
     public $response = null;
@@ -60,7 +59,7 @@ class Request
     public function upload_file($filepath)
     {
         if (!is_file($filepath)) {
-            throw new Exception('File cannot be uploaded: '.$filepath);
+            throw new \Exception('File cannot be uploaded: '.$filepath);
         }
 
         $filename = pathinfo($filepath, PATHINFO_BASENAME);
