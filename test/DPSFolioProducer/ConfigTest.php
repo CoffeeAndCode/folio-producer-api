@@ -1,15 +1,28 @@
 <?php
-class ConfigWrapper extends DPSFolioProducer\Config
-{
-    public $data;
-}
-
 class ConfigTest extends PHPUnit_Framework_TestCase
 {
     public function test_defaults_to_empty_array()
     {
-        $config = new ConfigWrapper();
-        $this->assertEquals(count($config->data), 0);
+        $class = new ReflectionClass('DPSFolioProducer\Config');
+        $property = $class->getProperty('data');
+        $property->setAccessible(true);
+
+        $config = new DPSFolioProducer\Config();
+        $this->assertEquals(count($property->getValue($config)), 0);
+    }
+
+    public function test_will_save_whitelisted_properties()
+    {
+        $config = new DPSFolioProducer\Config();
+        $config->email = 'email@example.com';
+        $this->assertTrue(isset($config->email));
+    }
+
+    public function test_will_not_save_nonwhitelisted_properties()
+    {
+        $config = new DPSFolioProducer\Config();
+        $config->non_whitelisted = 'text';
+        $this->assertFalse(isset($config->non_whitelisted));
     }
 
     public function test_can_retrieve_stored_configs()
@@ -37,7 +50,7 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($config->hello);
     }
 
-    public function test_initalize_config_with_data()
+    public function test_initalize_config_with_valid_properties()
     {
         $config = new DPSFolioProducer\Config(array(
             'email' => 'email@example.com',
@@ -45,6 +58,28 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         ));
         $this->assertEquals($config->email, 'email@example.com');
         $this->assertEquals($config->password, 'pass');
+    }
+
+    public function test_initalize_config_with_invalid_properties()
+    {
+        $config = new DPSFolioProducer\Config(array(
+            'another' => 'property',
+            'non_whitelisted' => 'hello'
+        ));
+        $this->assertFalse(isset($config->non_whitelisted));
+        $this->assertFalse(isset($config->another));
+    }
+
+    public function test_initalize_config_with_mixed_properties()
+    {
+        $config = new DPSFolioProducer\Config(array(
+            'another' => 'property',
+            'email' => 'email@example.com',
+            'non_whitelisted' => 'hello'
+        ));
+        $this->assertFalse(isset($config->non_whitelisted));
+        $this->assertFalse(isset($config->another));
+        $this->assertEquals($config->email, 'email@example.com');
     }
 
     public function test_isset_returns_true_for_existing_value()
@@ -58,6 +93,16 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     public function test_isset_returns_false_for_nonexistant_value()
     {
         $config = new DPSFolioProducer\Config();
-        $this->assertTrue(!isset($config->email));
+        $this->assertFalse(isset($config->email));
+    }
+
+    public function test_reset_clears_all_properties()
+    {
+        $config = new DPSFolioProducer\Config(array(
+            'email' => 'email@example.com'
+        ));
+        $this->assertTrue(isset($config->email));
+        $config->reset();
+        $this->assertFalse(isset($config->email));
     }
 }

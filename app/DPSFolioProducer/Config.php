@@ -24,6 +24,9 @@ namespace DPSFolioProducer;
  */
 class Config
 {
+    /**
+     * The top-level PHP session key to store data under.
+     */
     const SESSION_KEY = 'folio-producer-api';
 
     /**
@@ -38,6 +41,11 @@ class Config
      */
     private $properties;
 
+    /**
+     * An array of property names that will be set in PHP Session
+     * if one exists when the property is altered.
+     * @var array
+     */
     private $syncedProperties;
 
     /**
@@ -121,17 +129,24 @@ class Config
         }
     }
 
-    private function reset() {
-        $this->download_server = null;
-        $this->download_ticket = null;
-        $this->request_server = null;
-        $this->ticket = null;
+    /**
+     * Clear out properties and session data.
+     *
+     * @return null This method does not return anything.
+     */
+    public function reset() {
+        $this->data = array();
 
         if (session_id()) {
             unset($_SESSION[self::SESSION_KEY]);
         }
     }
 
+    /**
+     * Check PHP session and sync configuration properties if found.
+     *
+     * @return null This method does not return anything.
+     */
     private function syncFromSession() {
         if (session_id() &&
             isset($this->company) &&
@@ -150,6 +165,11 @@ class Config
         }
     }
 
+    /**
+     * If whitelisted, set the property in the PHP session.
+     *
+     * @return null This method does not return anything.
+     */
     private function syncSessionProperty($name, $value) {
         if (session_id() &&
             in_array($name, $this->syncedProperties) &&
