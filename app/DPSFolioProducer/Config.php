@@ -24,11 +24,21 @@ namespace DPSFolioProducer;
  */
 class Config
 {
+    const SESSION_KEY = 'folio-producer-api';
+
     /**
      * Holds the configuration data in an associative array.
      * @var array
      */
     protected $data;
+
+    /**
+     * An array of property names that are allowed to be set.
+     * @var array
+     */
+    private $properties;
+
+    private $syncedProperties;
 
     /**
      * Constructor for the object.
@@ -37,7 +47,36 @@ class Config
      */
     public function __construct($config=array())
     {
-        $this->data = $config;
+        $this->data = array();
+
+        $this->properties = array(
+            'api_server',
+            'company',
+            'consumer_key',
+            'consumer_secret',
+            'download_server',
+            'download_ticket',
+            'email',
+            'password',
+            'request_server',
+            'session_props',
+            'ticket'
+        );
+
+        $this->syncedProperties = array(
+            'download_server',
+            'download_ticket',
+            'request_server',
+            'ticket'
+        );
+
+        foreach (array_keys($config) as $key) {
+            if (in_array($key, $this->properties)) {
+                $this->$key = $config[$key];
+            }
+        }
+
+        $this->syncFromSession();
     }
 
     /**
@@ -76,6 +115,57 @@ class Config
      */
     public function __set($name, $value)
     {
-        $this->data[$name] = $value;
+        if (in_array($name, $this->properties)) {
+            $this->data[$name] = $value;
+            $this->syncSessionProperty($name, $value);
+        }
+    }
+
+    private function reset() {
+        $this->download_server = null;
+        $this->download_ticket = null;
+        $this->request_server = null;
+        $this->ticket = null;
+
+        if (session_id()) {
+            unset($_SESSION[self::SESSION_KEY]);
+        }
+    }
+
+    private function syncFromSession() {
+        if (session_id() &&
+            isset($this->company) &&
+            isset($this->email) &&
+            isset($_SESSION[self::SESSION_KEY]) &&
+            isset($_SESSION[self::SESSION_KEY][$this->company]) &&
+            isset($_SESSION[self::SESSION_KEY][$this->company][$this->email])
+            ) {
+
+            $data = $_SESSION[self::SESSION_KEY][$this->company][$this->email];
+            foreach ($this->syncedProperties as $property) {
+                if (isset($data[$property])) {
+                    $this->$property = $data[$property];
+                }
+            }
+        }
+    }
+
+    private function syncSessionProperty($name, $value) {
+        if (session_id() &&
+            in_array($name, $this->syncedProperties) &&
+            isset($this->company) &&
+            isset($this->email)) {
+
+            if (!isset($_SESSION[self::SESSION_KEY]) ||
+                !isset($_SESSION[self::SESSION_KEY][$this->company])) {
+                $_SESSION[self::SESSION_KEY] = array(
+                    $this->company => array($this->email => array())
+                );
+            } elseif (!isset($_SESSION[self::SESSION_KEY][$this->company][$this->email])) {
+                $_SESSION[self::SESSION_KEY][$this->company][$this->email] = array();
+            }
+
+            $_SESSION[self::SESSION_KEY][$this->company][$this->email][$name] = $value;
+        }
     }
 }

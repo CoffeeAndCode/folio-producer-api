@@ -52,7 +52,6 @@ class Client
         $this->config = new Config($config);
         $this->folio = new Services\FolioService($this->config);
         $this->session = new Services\SessionService($this->config);
-        $this->_syncSession();
     }
 
     /**
@@ -71,13 +70,6 @@ class Client
                 $this->config->download_ticket = $request->response->downloadTicket;
                 $this->config->request_server = $request->response->server;
                 $this->config->ticket = $request->response->ticket;
-
-                if (session_id()) {
-                    $_SESSION['download_server'] = $this->config->download_server;
-                    $_SESSION['download_ticket'] = $this->config->download_ticket;
-                    $_SESSION['request_server'] = $this->config->request_server;
-                    $_SESSION['ticket'] = $this->config->ticket;
-                }
             }
         }
 
@@ -121,16 +113,10 @@ class Client
         if ($request && property_exists($request, 'response')) {
             if (property_exists($request->response, 'ticket')) {
                 $this->config->ticket = $request->response->ticket;
-                if (session_id()) {
-                    $_SESSION['ticket'] = $this->config->ticket;
-                }
             }
 
             if (property_exists($request->response, 'downloadTicket')) {
                 $this->config->download_ticket = $request->response->downloadTicket;
-                if (session_id()) {
-                    $_SESSION['download_ticket'] = $this->config->download_ticket;
-                }
             }
         }
 
@@ -176,39 +162,6 @@ class Client
      */
     private function _reset()
     {
-        $this->config->download_server = null;
-        $this->config->download_ticket = null;
-        $this->config->request_server = null;
-        $this->config->ticket = null;
-
-        if (session_id()) {
-            session_unset();
-        }
-    }
-
-    /**
-     * Sets class variables based on session variables if they are set.
-     *
-     * @return null
-     */
-    private function _syncSession()
-    {
-        if (session_id()) {
-            if (isset($_SESSION) && isset($_SESSION['download_server'])) {
-                $this->config->download_server = $_SESSION['download_server'];
-            }
-
-            if (isset($_SESSION) && isset($_SESSION['download_ticket'])) {
-                $this->config->download_ticket = $_SESSION['download_ticket'];
-            }
-
-            if (isset($_SESSION) && isset($_SESSION['request_server'])) {
-                $this->config->request_server = $_SESSION['request_server'];
-            }
-
-            if (isset($_SESSION) && isset($_SESSION['ticket'])) {
-                $this->config->ticket = $_SESSION['ticket'];
-            }
-        }
+        $this->config->reset();
     }
 }

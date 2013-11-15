@@ -15,16 +15,16 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     public function test_can_retrieve_stored_configs()
     {
         $config = new DPSFolioProducer\Config();
-        $config->hello = 'world';
-        $this->assertEquals($config->hello, 'world');
+        $config->email = 'email@example.com';
+        $this->assertEquals($config->email, 'email@example.com');
     }
 
     public function test_can_overwrite_stored_configs()
     {
         $config = new DPSFolioProducer\Config();
-        $config->hello = 'world';
-        $config->hello = 'universe';
-        $this->assertEquals($config->hello, 'universe');
+        $config->email = 'email@example.com';
+        $config->email = 'new.email@example.com';
+        $this->assertEquals($config->email, 'new.email@example.com');
     }
 
     /**
@@ -40,24 +40,24 @@ class ConfigTest extends PHPUnit_Framework_TestCase
     public function test_initalize_config_with_data()
     {
         $config = new DPSFolioProducer\Config(array(
-            'hello' => 'world',
-            'key' => true
+            'email' => 'email@example.com',
+            'password' => 'pass'
         ));
-        $this->assertEquals($config->hello, 'world');
-        $this->assertEquals($config->key, true);
+        $this->assertEquals($config->email, 'email@example.com');
+        $this->assertEquals($config->password, 'pass');
     }
 
     public function test_isset_returns_true_for_existing_value()
     {
         $config = new DPSFolioProducer\Config(array(
-            'hello' => 'world'
+            'email' => 'email@example.com'
         ));
-        $this->assertTrue(isset($config->hello));
+        $this->assertTrue(isset($config->email));
     }
 
     public function test_isset_returns_false_for_nonexistant_value()
     {
         $config = new DPSFolioProducer\Config();
-        $this->assertTrue(!isset($config->hello));
+        $this->assertTrue(!isset($config->email));
     }
 }
