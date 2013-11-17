@@ -12,7 +12,7 @@ class GetArticlesMetadata extends Command
 
         $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles', $this->config,
             array(
-                'content' => json_encode($data),
+                'data' => json_encode($data),
                 'type' => 'get'
             )
         );
