@@ -75,8 +75,8 @@ class APIRequest
             $headerHash = $this->settings['headers'];
         }
 
-        // set Content-Length if 'data' is present
-        if (isset($this->settings['data'])) {
+        // set Content-Length if 'data' is present and not uploading file
+        if (isset($this->settings['data']) && !isset($this->settings['file'])) {
             $headerHash['Content-Length'] = strlen($this->settings['data']);
         }
 

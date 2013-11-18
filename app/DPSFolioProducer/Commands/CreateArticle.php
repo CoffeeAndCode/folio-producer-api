@@ -36,12 +36,20 @@ class CreateArticle extends Command
         $filepath = $this->options['filepath'];
         $folioID = $this->options['folio_id'];
 
-        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles', $this->config,
-            array(
-                'file' => $filepath,
-                'type' => 'post'
-            )
+        $data = $this->options;
+        unset($data['filepath']);
+        unset($data['folio_id']);
+
+        $options = array(
+            'file' => $filepath,
+            'type' => 'post'
         );
+
+        // only add data if it's not empty
+        if (!empty($data)) {
+            $options['data'] = json_encode($data);
+        }
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles', $this->config, $options);
 
         return $request->run();
     }

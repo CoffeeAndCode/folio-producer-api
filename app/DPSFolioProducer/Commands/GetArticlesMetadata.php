@@ -12,12 +12,13 @@ class GetArticlesMetadata extends Command
         $data = $this->options;
         unset($data['folio_id']);
 
-        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles', $this->config,
-            array(
-                'data' => json_encode($data),
-                'type' => 'get'
-            )
-        );
+        $options = array('type' => 'get');
+
+        if (!empty($data) {
+            $options['data'] = json_encode($data);
+        });
+
+        $request = new \DPSFolioProducer\APIRequest('folios/'.$folioID.'/articles', $this->config, $options);
 
         return $request->run();
     }

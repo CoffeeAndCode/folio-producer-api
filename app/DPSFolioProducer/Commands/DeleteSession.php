@@ -16,6 +16,7 @@ class DeleteSession extends Command
         $data = array(
             'cancelToken' => true
         );
+        $data = array_merge($data, $this->options);
 
         $request = new \DPSFolioProducer\APIRequest('sessions', $this->config,
             array(
