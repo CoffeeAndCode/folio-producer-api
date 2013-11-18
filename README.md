@@ -30,6 +30,25 @@ calls.
     if (!isset($config)) { user_error('Missing configuration.'); }
     $client = new DPSFolioProducer\Client($config);
 
+You can then make API calls by issuing one of the following requests like
+the following retrieval of all folio metadata.
+
+    $request = $client->execute('get_folios_metadata');
+
+    // $request->response will be non-null if successful
+    if ($request->response) {
+        foreach ($request->response->folios as $folio) {
+            var_dump($folio);
+            echo '<hr />';
+        }
+    } else {
+        // iterate through all errors, including validation errors done
+        // without issuing the actual API request
+        foreach ($request->errors as $error) {
+            echo $error->message;
+        }
+    }
+
 
 ### Create Session
 
@@ -63,9 +82,11 @@ on subsequent API requests.
     $request = $client->execute('get_folios_metadata');
 
     echo '<h1>Folios</h1>';
-    foreach ($request->response->folios as $folio) {
-        print_r($folio);
-        echo '<hr />';
+    if ($request->response) {
+        foreach ($request->response->folios as $folio) {
+            print_r($folio);
+            echo '<hr />';
+        }
     }
 
 
@@ -180,6 +201,16 @@ on subsequent API requests.
     $request = $client->execute('get_articles_metadata', array(
         'folio_id' => $folio_id
     ));
+
+
+### Errors
+
+There are three types of errors that may be returned from a request. They
+are `Error`, `APIResponseError`, and `ValidationError`. They all have a
+`message` property that describes the error.
+
+`APIResponseError` also contains the `status` and `httpStatusCode` from
+the data returned by Adobe's DPS server.
 
 
 ## Testing
