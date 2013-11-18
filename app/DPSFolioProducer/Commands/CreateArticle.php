@@ -27,7 +27,7 @@ class CreateArticle extends Command
     /**
      * Execute the command.
      *
-     * @return Request Returns a Request object from the API call.
+     * @return HTTPRequest Returns a HTTPRequest object from the API call.
      */
     public function execute()
     {

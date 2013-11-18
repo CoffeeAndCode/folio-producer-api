@@ -48,7 +48,7 @@ class APIRequest
             $options['http']['content'] = $this->settings['data'];
         }
 
-        $request = new Services\Request($this->url, $options);
+        $request = new HTTPRequest($this->url, $options);
         if (isset($this->settings['file'])) {
             $request->run($this->settings['file']);
         } else {

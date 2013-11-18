@@ -46,7 +46,7 @@ class Client
      * @param string $command_name The name of the API command to make in snakecase.
      * @param array  $options      The configuration options to use for the API request.
      *
-     * @return Request|null Returns a request object if the call is made, null otherwise.
+     * @return HTTPRequest|null Returns a request object if the call is made, null otherwise.
      */
     public function execute($command_name, $options=array())
     {

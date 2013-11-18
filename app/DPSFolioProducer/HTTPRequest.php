@@ -1,7 +1,7 @@
 <?php
-namespace DPSFolioProducer\Services;
+namespace DPSFolioProducer;
 
-class Request
+class HTTPRequest
 {
     public $options = null;
     public $response_headers = array();
