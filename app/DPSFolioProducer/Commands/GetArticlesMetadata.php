@@ -3,6 +3,8 @@ namespace DPSFolioProducer\Commands;
 
 class GetArticlesMetadata extends Command
 {
+    protected $requiredOptions = array('folio_id');
+
     public function execute()
     {
         $folioID = $this->options['folio_id'];

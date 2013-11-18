@@ -6,6 +6,7 @@
  */
 class CommandTestExample extends DPSFolioProducer\Commands\Command
 {
+    public $requiredOptions = array('hello');
     public $options;
     public function execute() {}
 }
@@ -32,5 +33,13 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($class->options, $options);
         $options['hello'] = 'universe';
         $this->assertNotEquals($class->options, $options);
+    }
+
+    public function test_fails_if_required_options_not_set()
+    {
+        $options = array();
+        $class = new CommandTestExample($this->config, $options);
+        $this->assertFalse($class->isValid());
+        $this->assertEmpty(array_diff($class->errors, array('hello is required.')));
     }
 }

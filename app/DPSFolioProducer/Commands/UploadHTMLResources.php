@@ -3,6 +3,8 @@ namespace DPSFolioProducer\Commands;
 
 class UploadHTMLResources extends Command
 {
+    protected $requiredOptions = array('filepath', 'folio_id');
+
     public function execute()
     {
         $filepath = $this->options['filepath'];

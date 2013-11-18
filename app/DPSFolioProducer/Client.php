@@ -53,36 +53,44 @@ class Client
         $command_class = $this->_getCommandClass($command_name);
         $command = new $command_class($this->config, $options);
 
-        if ($command_name !== 'create_session' && !isset($this->config->ticket)) {
-            $this->execute('create_session');
-        }
-
-        $request = $command->execute();
-
-        // if an InvalidTicket response is returned, reauthenticate and retry
-        if ($request && $request->get_response_code() === 200
-            && property_exists($request->response, 'status')
-            && $request->response->status === 'InvalidTicket'
-            && !$command->is_retry
-        ) {
-            $this->_reset();
-            $this->execute('create_session');
-            $request = $command->retry();
-        }
-
-        // 10 min before tickets expire, new ones are sent with every
-        // API call that returns json
-        if ($request && property_exists($request, 'response')) {
-            if (property_exists($request->response, 'ticket')) {
-                $this->config->ticket = $request->response->ticket;
+        // shortcut API request if Command is invalid
+        if ($command->isValid()) {
+            if ($command_name !== 'create_session' && !isset($this->config->ticket)) {
+                $this->execute('create_session');
             }
 
-            if (property_exists($request->response, 'downloadTicket')) {
-                $this->config->download_ticket = $request->response->downloadTicket;
+            $request = $command->execute();
+
+            // if an InvalidTicket response is returned, reauthenticate and retry
+            if ($request && $request->get_response_code() === 200
+                && property_exists($request->response, 'status')
+                && $request->response->status === 'InvalidTicket'
+                && !$command->is_retry
+            ) {
+                $this->_reset();
+                $this->execute('create_session');
+                $request = $command->retry();
             }
+
+            // 10 min before tickets expire, new ones are sent with every
+            // API call that returns json
+            if ($request && property_exists($request, 'response')) {
+                if (property_exists($request->response, 'ticket')) {
+                    $this->config->ticket = $request->response->ticket;
+                }
+
+                if (property_exists($request->response, 'downloadTicket')) {
+                    $this->config->download_ticket = $request->response->downloadTicket;
+                }
+            }
+            return $request;
         }
 
-        return $request;
+        return (object) array('response' => (object) array(
+                'errors' => $command->errors,
+                'status' => 'ValidationError'
+            )
+        );
     }
 
     /**

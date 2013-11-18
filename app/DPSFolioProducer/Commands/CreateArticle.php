@@ -24,6 +24,8 @@ namespace DPSFolioProducer\Commands;
  */
 class CreateArticle extends Command
 {
+    protected $requiredOptions = array('filepath', 'folio_id');
+
     /**
      * Execute the command.
      *

@@ -3,16 +3,26 @@ namespace DPSFolioProducer\Commands;
 
 abstract class Command implements ICommand
 {
-    public $is_retry;
+    public $errors = array();
+    public $is_retry = false;
 
     protected $config;
     protected $options;
+    protected $requiredOptions = array();
 
     public function __construct($config, $options=array())
     {
         $this->config = $config;
-        $this->is_retry = false;
         $this->options = $options;
+    }
+
+    public function isValid() {
+        foreach ($this->requiredOptions as $requiredOption) {
+            if (!isset($this->options[$requiredOption])) {
+                $this->errors[] = $requiredOption.' is required.';
+            }
+        }
+        return empty($this->errors);
     }
 
     public function retry() {

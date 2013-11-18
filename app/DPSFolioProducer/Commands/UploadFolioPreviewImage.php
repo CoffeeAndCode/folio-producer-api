@@ -3,6 +3,8 @@ namespace DPSFolioProducer\Commands;
 
 class UploadFolioPreviewImage extends Command
 {
+    protected $requiredOptions = array('filepath', 'folio_id', 'orientation');
+
     public function execute()
     {
         $filepath = $this->options['filepath'];
