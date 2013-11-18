@@ -26,7 +26,7 @@ class DeleteSession extends Command
         );
 
         $request = $request->run();
-        if ($request->response->status === 'ok') {
+        if ($request && $request->response) {
             $this->config->reset();
         }
         return $request;

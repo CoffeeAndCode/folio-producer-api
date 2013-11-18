@@ -19,7 +19,7 @@ abstract class Command implements ICommand
     public function isValid() {
         foreach ($this->requiredOptions as $requiredOption) {
             if (!isset($this->options[$requiredOption])) {
-                $this->errors[] = $requiredOption.' is required.';
+                $this->errors[] = new \DPSFolioProducer\Errors\ValidationError($requiredOption.' is required.');
             }
         }
         return empty($this->errors);

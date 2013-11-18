@@ -28,7 +28,7 @@ class HTTPRequest
         $context = stream_context_create($this->options);
         $response = @file_get_contents($this->url, false, $context);
         if ($response === false) {
-            $this->errors[] = isset($php_errormsg) ? $php_errormsg : 'Error retrieving url: '.$this->url;
+            $this->errors[] = new \DPSFolioProducer\Errors\Error(isset($php_errormsg) ? $php_errormsg : 'Error retrieving url: '.$this->url);
         }
 
         if (isset($http_response_header)) {
@@ -39,7 +39,7 @@ class HTTPRequest
             $this->response = json_decode($response);
             if ($this->response === null) {
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    $this->errors[] = json_last_error();
+                    $this->errors[] = new \DPSFolioProducer\Errors\Error(json_last_error());
                 }
             }
         } else {
@@ -47,11 +47,16 @@ class HTTPRequest
         }
 
         if (empty($this->response)) {
-            $this->errors[] = 'There was no API response.';
-        } elseif($this->get_response_code() !== 200) {
-            $this->errors[] = 'API returned status code '.$this->get_response_code();
-        } elseif(!$this->isStatusOK()) {
-            $this->errors[] = 'API returned status '.$this->response->status;
+            $this->errors[] = new \DPSFolioProducer\Errors\Error('There was no API response.');
+
+        } elseif($this->get_response_code() !== 200 ||
+            !$this->isStatusOK()) {
+
+            $this->errors[] = new \DPSFolioProducer\Errors\APIResponseError(
+                $this->response->errorDetail,
+                $this->response->status,
+                $this->get_response_code()
+            );
         }
 
         // clear out the response if an error occured

@@ -32,10 +32,7 @@ class CreateSession extends Command
         );
 
         $request = $request->run();
-        if ($request &&
-            property_exists($request, 'response') &&
-            property_exists($request->response, 'status') &&
-            $request->response->status === 'ok') {
+        if ($request && $request->response) {
             $this->config->download_server = $request->response->downloadServer;
             $this->config->download_ticket = $request->response->downloadTicket;
             $this->config->request_server = $request->response->server;

@@ -26,7 +26,7 @@ class GetNewServers extends Command
         );
 
         $request = $request->run();
-        if ($request->response->status === 'ok') {
+        if ($request && $request->response) {
             $this->config->download_server = $request->response->downloadServer;
             $this->config->request_server = $request->response->server;
         }

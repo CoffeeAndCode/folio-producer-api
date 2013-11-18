@@ -40,6 +40,8 @@ class CommandTest extends PHPUnit_Framework_TestCase
         $options = array();
         $class = new CommandTestExample($this->config, $options);
         $this->assertFalse($class->isValid());
-        $this->assertEmpty(array_diff($class->errors, array('hello is required.')));
+        $this->assertCount(1, $class->errors);
+        $this->assertInstanceOf('\DPSFolioProducer\Errors\ValidationError', $class->errors[0]);
+        $this->assertEquals($class->errors[0]->message, 'hello is required.');
     }
 }

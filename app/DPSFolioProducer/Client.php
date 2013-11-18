@@ -62,7 +62,8 @@ class Client
             $request = $command->execute();
 
             // if an InvalidTicket response is returned, reauthenticate and retry
-            if ($request && in_array('API returned status InvalidTicket', $request->errors()) &&
+            if ($request &&
+                $this->isInvalidTicketError($request->errors()) &&
                 !$command->is_retry
             ) {
                 $this->_reset();
@@ -91,6 +92,18 @@ class Client
                 'status' => 'ValidationError'
             )
         );
+    }
+
+    private function isInvalidTicketError($errors)
+    {
+        foreach ($errors as $error) {
+            if (is_a($error, '\DPSFolioProducer\Errors\APIResponseError') &&
+                $error->status === 'InvalidTicket'
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
