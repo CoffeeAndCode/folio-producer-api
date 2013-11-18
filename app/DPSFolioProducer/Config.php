@@ -1,62 +1,55 @@
 <?php
 /**
- * Adobe DPS API client library.
- *
- * @category  AdobeDPS
- * @package   DPSFolioProducer
- * @author    Jonathan Knapp <jon@coffeeandcode.com>
- * @copyright 2013 Jonathan Knapp
- * @license   MIT https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE
- * @version   1.0.0
- * @link      https://github.com/CoffeeAndCode/folio-producer-api
+ * DPSFolioProducer\Config class
  */
 namespace DPSFolioProducer;
 
 /**
- * Config Configuration object for the application.
+ * The configuration manager that handles synching Session data
  *
  * @category AdobeDPS
  * @package  DPSFolioProducer
  * @author   Jonathan Knapp <jon@coffeeandcode.com>
- * @license  MIT https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE
+ * @author   The Brothers Mueller <thebrothersmueller@smny.us>
+ * @license  https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE MIT
  * @version  1.0.0
  * @link     https://github.com/CoffeeAndCode/folio-producer-api
  */
 class Config
 {
     /**
-     * The top-level PHP session key to store data under.
+     * The top-level PHP session key to store data under
      */
     const SESSION_KEY = 'folio-producer-api';
 
     /**
-     * Holds the configuration data in an associative array.
+     * Holds the configuration data in an associative array
+     *
      * @var array
      */
-    protected $data;
+    protected $data = array();
 
     /**
-     * An array of property names that are allowed to be set.
+     * An array of property names that are allowed to be set
+     *
      * @var array
      */
     private $properties;
 
     /**
-     * An array of property names that will be set in PHP Session
-     * if one exists when the property is altered.
+     * Propertiesthat will be set in the PHP Session when altered
+     *
      * @var array
      */
     private $syncedProperties;
 
     /**
-     * Constructor for the object.
+     * Constructor for the object
      *
-     * @param array $config Associateive array to use as a base config.
+     * @param array $config Associative array to use as a base config
      */
     public function __construct($config=array())
     {
-        $this->data = array();
-
         $this->properties = array(
             'api_server',
             'company',
@@ -88,13 +81,13 @@ class Config
     }
 
     /**
-     * Magic method to allow retriving properties directly.
+     * Magic method to allow retriving properties directly
      *
-     * @param string $name The property name to look up.
+     * @param string $name The property name to look up
      *
-     * @throws Exception if the requested property has not already been set.
+     * @throws Exception if the requested property has not already been set
      *
-     * @return mixed The property that was previously stored.
+     * @return mixed The property that was previously stored
      */
     public function __get($name)
     {
@@ -102,11 +95,11 @@ class Config
     }
 
     /**
-     * Magic method to check if a config property is already set.
+     * Magic method to check if a config property is already set
      *
-     * @param string $name The property name to check for.
+     * @param string $name The property name to check for
      *
-     * @return boolean Returns TRUE if the property is set, FALSE otherwise.
+     * @return boolean Returns TRUE if the property is set, FALSE otherwise
      */
     public function __isset($name)
     {
@@ -114,12 +107,12 @@ class Config
     }
 
     /**
-     * Magic method to set a configuration property directly.
+     * Magic method to set a configuration property directly
      *
-     * @param string $name  The property to set.
-     * @param mixed  $value The value to store under the specified property.
+     * @param string $name  The property to set
+     * @param mixed  $value The value to store under the specified property
      *
-     * @return null __set methods should not return any values.
+     * @return null __set methods should not return any values
      */
     public function __set($name, $value)
     {
@@ -130,9 +123,9 @@ class Config
     }
 
     /**
-     * Clear out properties and session data.
+     * Clear out properties and session data
      *
-     * @return null This method does not return anything.
+     * @return void
      */
     public function reset() {
         foreach ($this->syncedProperties as $property) {
@@ -145,9 +138,9 @@ class Config
     }
 
     /**
-     * Check PHP session and sync configuration properties if found.
+     * Check PHP session and sync configuration properties if found
      *
-     * @return null This method does not return anything.
+     * @return void
      */
     private function syncFromSession() {
         if (session_id() &&
@@ -168,9 +161,12 @@ class Config
     }
 
     /**
-     * If whitelisted, set the property in the PHP session.
+     * Store the requested property in the current PHP Session if available
      *
-     * @return null This method does not return anything.
+     * @param string $name  The property to sync
+     * @param mixed  $value The value to store under the specified property
+     *
+     * @return void
      */
     private function syncSessionProperty($name, $value) {
         if (session_id() &&

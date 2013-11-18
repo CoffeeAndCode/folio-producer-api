@@ -1,25 +1,89 @@
 <?php
+/**
+ * DPSFolioProducer\HTTPRequest class
+ */
 namespace DPSFolioProducer;
 
+/**
+ * Makes HTTP requests, collects errors, handles form submissions
+ *
+ * @category AdobeDPS
+ * @package  DPSFolioProducer
+ * @author   Jonathan Knapp <jon@coffeeandcode.com>
+ * @author   The Brothers Mueller <thebrothersmueller@smny.us>
+ * @license  https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE MIT
+ * @version  1.0.0
+ * @link     https://github.com/CoffeeAndCode/folio-producer-api
+ */
 class HTTPRequest
 {
+    /**
+     * Array of options used to make the HTTP request
+     *
+     * @var array
+     */
     public $options = null;
+
+    /**
+     * Array of headers captured from the HTTP response
+     *
+     * @var array
+     */
     public $response_headers = array();
+
+    /**
+     * Data returned from the HTTP request
+     *
+     * If the response is json content, it will be returned as an object
+     * otherwise it will be returned as a string. If an error is encountered
+     * or the call is not made, it will be null.
+     *
+     * @var object|string|null
+     */
     public $response = null;
+
+    /**
+     * The full url to make the request to
+     *
+     * @var string
+     */
     public $url = null;
 
+    /**
+     * Array of error objects created during HTTP request
+     *
+     * @var array
+     */
     private $errors = array();
 
+    /**
+     * Creats the HTTP request object
+     *
+     * @param string $url    Full url to make request to
+     * @param array $options Associative array of options to use in request
+     */
     public function __construct($url, $options)
     {
         $this->options = $options;
         $this->url = $url;
     }
 
+    /**
+     * Returns an array of errors encountered during the request
+     *
+     * @return array Array of Error objects
+     */
     public function errors() {
         return $this->errors;
     }
 
+    /**
+     * Make the HTTP request, store response info & headers, record any errors
+     *
+     * @param  string $filename Optional path to a file to send during request
+     * @return object|string|null Mixed return type depending on returned content
+     *                            type or if an error occured
+     */
     public function run($filename=null)
     {
         if ($filename) {
@@ -67,6 +131,11 @@ class HTTPRequest
         return $this->response;
     }
 
+    /**
+     * Retrieve the HTTP response code from last request
+     *
+     * @return int|null Returns response code if found, otherwise null
+     */
     public function get_response_code()
     {
         $response_code = null;
@@ -80,6 +149,13 @@ class HTTPRequest
         return $response_code;
     }
 
+    /**
+     * Mange the request content and headers for handling a multi-part form
+     * submission
+     *
+     * @param  string $filepath path to file to upload
+     * @return void
+     */
     public function upload_file($filepath)
     {
         if (!is_file($filepath)) {
@@ -116,6 +192,12 @@ class HTTPRequest
         $this->options['http']['content'] = $data;
     }
 
+    /**
+     * Replace the Content-Type header with newly specified header
+     *
+     * @param  string $new_header new header to use for Content-Type
+     * @return void
+     */
     private function replace_content_type_header($new_header)
     {
         $this->options['http']['header'] = array_map(function ($header) use ($new_header) {
@@ -126,6 +208,11 @@ class HTTPRequest
         }, $this->options['http']['header']);
     }
 
+    /**
+     * Retrieve the Content-Type of the http response
+     *
+     * @return string|null returns the content type if found, otherwise null
+     */
     private function responseContentType()
     {
         $contentType = null;
@@ -139,6 +226,11 @@ class HTTPRequest
         return $contentType;
     }
 
+    /**
+     * Determine if HTTP response returned an 'ok'
+     *
+     * @return boolean Return true if status is found and 'ok', otherwise false
+     */
     private function isStatusOK()
     {
         return (is_object($this->response) &&

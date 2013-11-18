@@ -1,24 +1,17 @@
 <?php
 /**
- * Adobe DPS API client library.
- *
- * @category  AdobeDPS
- * @package   DPSFolioProducer
- * @author    Jonathan Knapp <jon@coffeeandcode.com>
- * @copyright 2013 Jonathan Knapp
- * @license   MIT https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE
- * @version   1.0.0
- * @link      https://github.com/CoffeeAndCode/folio-producer-api
+ * DPSFolioProducer\Client class
  */
 namespace DPSFolioProducer;
 
 /**
- * Client class that handles communication with the DPS API.
+ * An API client that automatically handles session creation and retry
  *
  * @category AdobeDPS
  * @package  DPSFolioProducer
  * @author   Jonathan Knapp <jon@coffeeandcode.com>
- * @license  MIT https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE
+ * @author   The Brothers Mueller <thebrothersmueller@smny.us>
+ * @license  https://github.com/CoffeeAndCode/folio-producer-api/blob/master/LICENSE MIT
  * @version  1.0.0
  * @link     https://github.com/CoffeeAndCode/folio-producer-api
  */
@@ -94,6 +87,12 @@ class Client
         );
     }
 
+    /**
+     * Check if an InvalidError was found in the passed errors array
+     *
+     * @param  array  $errors Array of Error objects encountered
+     * @return boolean Return true if InvalidError was found, false otherwise
+     */
     private function isInvalidTicketError($errors)
     {
         foreach ($errors as $error) {
@@ -111,7 +110,7 @@ class Client
      *
      * @param string $word The string to convert from snake to camelcase.
      *
-     * @return string
+     * @return string Return the camelized text
      */
     private function _camelize($word)
     {
