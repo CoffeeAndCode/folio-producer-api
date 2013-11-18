@@ -31,6 +31,33 @@ calls.
     $client = new DPSFolioProducer\Client($config);
 
 
+### Create Session
+
+This will authenticate with DPS and use your credentials on subsequent requests.
+
+**Note:** You should not have to make this call explicitly as it is
+automatically called by the library when needed before executing another API
+call.
+
+    $request = $client->execute('create_session');
+
+
+### Delete Session
+
+This will clear out stored credentials and any used session variables if the
+API call is successsful.
+
+    $request = $client->execute('delete_session');
+
+
+### Get New Servers
+
+This will update stored credentials to use the returned api and download servers
+on subsequent API requests.
+
+    $request = $client->execute('get_new_servers');
+
+
 ### Get All Folio Metadata
 
     $request = $client->execute('get_folios_metadata');

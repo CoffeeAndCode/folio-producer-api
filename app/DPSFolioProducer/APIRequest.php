@@ -27,17 +27,11 @@ class APIRequest
     private $settings;
     private $url;
 
-    public function __construct($url, $config, $settings)
+    public function __construct($path, $config, $settings)
     {
         $this->config = $config;
         $this->settings = $settings;
-        $this->url = $this->url($url);
-
-        // update url depending on urlType if set
-        if (isset($settings['urlType']) &&
-            $settings['urlType'] === 'download') {
-            $this->url = $this->downloadURL($url);
-        }
+        $this->url = $this->url($path);
     }
 
     public function run() {
@@ -72,11 +66,6 @@ class APIRequest
         return 'AdobeAuth ticket="'.urlencode($this->config->ticket).'"';
     }
 
-    private function downloadURL($path) {
-        $server = $this->config->download_server;
-        return $server.'/webservices/'.$path;
-    }
-
     private function getHeaders() {
         $headers = array();
         $headerHash = array();
@@ -96,7 +85,9 @@ class APIRequest
             $headerHash['Content-Type'] = 'application/json; charset=utf-8';
         }
 
-        $headerHash['Authorization'] = $this->authHeader();
+        if (!isset($headerHash['Authorization'])) {
+            $headerHash['Authorization'] = $this->authHeader();
+        }
 
         // collapse array keys with differing case
         $headerHash = array_change_key_case($headerHash);
@@ -110,7 +101,20 @@ class APIRequest
 
     private function url($path) {
         $server = $this->config->api_server;
-        if (isset($this->config->request_server) && $this->config->request_server) {
+
+        // check if attempting to make create session API call
+        if (isset($this->settings['headers']) &&
+            isset($this->settings['headers']['Authorization'])) {
+            $server = $this->config->api_server;
+        // update url depending on urlType if set
+        } elseif (isset($this->config->download_server) &&
+            $this->config->download_server &&
+            isset($this->settings['urlType']) &&
+            $this->settings['urlType'] === 'download') {
+            $server = $this->config->download_server;
+        // set to reqest_server for API requests
+        } elseif (isset($this->config->request_server) &&
+            $this->config->request_server) {
             $server = $this->config->request_server;
         }
 

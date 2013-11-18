@@ -27,6 +27,30 @@ foreach ($request->response->folios as $folio) {
 }
 
 
+// Create Session
+/*
+$request = $client->execute('create_session');
+var_dump($request);
+echo '<hr />';
+*/
+
+
+// Delete Session
+/*
+$request = $client->execute('delete_session');
+var_dump($request);
+echo '<hr />';
+*/
+
+
+// Get New Servers
+/*
+$request = $client->execute('get_new_servers');
+var_dump($request);
+echo '<hr />';
+*/
+
+
 // Get Folio Metadata
 /*
 $request = $client->execute('get_folio_metadata', array('folio_id' => $folio_id));

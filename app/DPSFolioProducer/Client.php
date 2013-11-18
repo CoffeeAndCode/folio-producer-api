@@ -31,12 +31,6 @@ class Client
     protected $config = null;
 
     /**
-     * THe Session service for API calls.
-     * @var Session
-     */
-    protected $session = null;
-
-    /**
      * Class constructor.
      *
      * @param array $config The configuration hash to startup the library.
@@ -44,29 +38,6 @@ class Client
     public function __construct($config)
     {
         $this->config = new Config($config);
-        $this->session = new Services\SessionService($this->config);
-    }
-
-    /**
-     * Creates a new session through Adobe's DPS API.
-     *
-     * @return Request|null Returns a request object if the call is made, null otherwise.
-     */
-    public function createSession()
-    {
-        $request = null;
-        if (!isset($this->config->ticket) || !$this->config->ticket) {
-            $request = $this->session->create();
-
-            if ($request->response->status === 'ok') {
-                $this->config->download_server = $request->response->downloadServer;
-                $this->config->download_ticket = $request->response->downloadTicket;
-                $this->config->request_server = $request->response->server;
-                $this->config->ticket = $request->response->ticket;
-            }
-        }
-
-        return $request;
     }
 
     /**
@@ -82,11 +53,10 @@ class Client
         $command_class = $this->_getCommandClass($command_name);
         $command = new $command_class($this->config, $options);
 
-        if (!isset($this->config->ticket)) {
-            $this->createSession();
+        if ($command_name !== 'create_session' && !isset($this->config->ticket)) {
+            $this->execute('create_session');
         }
 
-        $command->session = $this->session;
         $request = $command->execute();
 
         // if an InvalidTicket response is returned, reauthenticate and retry
@@ -96,7 +66,7 @@ class Client
             && !$command->is_retry
         ) {
             $this->_reset();
-            $this->createSession();
+            $this->execute('create_session');
             $request = $command->retry();
         }
 
