@@ -135,7 +135,9 @@ class Config
      * @return null This method does not return anything.
      */
     public function reset() {
-        $this->data = array();
+        foreach ($this->syncedProperties as $property) {
+            unset($this->data[$property]);
+        }
 
         if (session_id()) {
             unset($_SESSION[self::SESSION_KEY]);

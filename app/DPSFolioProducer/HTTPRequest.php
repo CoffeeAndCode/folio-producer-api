@@ -8,10 +8,16 @@ class HTTPRequest
     public $response = null;
     public $url = null;
 
+    private $errors = array();
+
     public function __construct($url, $options)
     {
         $this->options = $options;
         $this->url = $url;
+    }
+
+    public function errors() {
+        return $this->errors;
     }
 
     public function run($filename=null)
@@ -22,7 +28,7 @@ class HTTPRequest
         $context = stream_context_create($this->options);
         $response = @file_get_contents($this->url, false, $context);
         if ($response === false) {
-            $response = (object) array('error' => isset($php_errormsg) ? $php_errormsg : 'Error retrieving url: '.$this->url);
+            $this->errors[] = isset($php_errormsg) ? $php_errormsg : 'Error retrieving url: '.$this->url;
         }
 
         if (isset($http_response_header)) {
@@ -33,11 +39,24 @@ class HTTPRequest
             $this->response = json_decode($response);
             if ($this->response === null) {
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    user_error(json_last_error());
+                    $this->errors[] = json_last_error();
                 }
             }
         } else {
             $this->response = $response;
+        }
+
+        if (empty($this->response)) {
+            $this->errors[] = 'There was no API response.';
+        } elseif($this->get_response_code() !== 200) {
+            $this->errors[] = 'API returned status code '.$this->get_response_code();
+        } elseif(!$this->isStatusOK()) {
+            $this->errors[] = 'API returned status '.$this->response->status;
+        }
+
+        // clear out the response if an error occured
+        if (!empty($this->errors)) {
+            $this->response = null;
         }
 
         return $this->response;
@@ -113,5 +132,12 @@ class HTTPRequest
             }
         }
         return $contentType;
+    }
+
+    private function isStatusOK()
+    {
+        return (is_object($this->response) &&
+                property_exists($this->response, 'status') &&
+                $this->response->status === 'ok');
     }
 }

@@ -96,13 +96,15 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(isset($config->email));
     }
 
-    public function test_reset_clears_all_properties()
+    public function test_reset_clears_all_synched_properties()
     {
         $config = new DPSFolioProducer\Config(array(
-            'email' => 'email@example.com'
+            'email' => 'email@example.com',
+            'ticket' => '1234abcd'
         ));
-        $this->assertTrue(isset($config->email));
+        $this->assertTrue(isset($config->ticket));
         $config->reset();
-        $this->assertFalse(isset($config->email));
+        $this->assertTrue(isset($config->email));
+        $this->assertFalse(isset($config->ticket));
     }
 }

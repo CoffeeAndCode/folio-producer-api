@@ -24,6 +24,7 @@ namespace DPSFolioProducer;
  */
 class APIRequest
 {
+    private $errors = array();
     private $settings;
     private $url;
 
@@ -32,6 +33,10 @@ class APIRequest
         $this->config = $config;
         $this->settings = $settings;
         $this->url = $this->url($path);
+    }
+
+    public function errors() {
+        return $this->errors;
     }
 
     public function run() {
@@ -54,6 +59,7 @@ class APIRequest
         } else {
             $request->run();
         }
+        $this->errors = $request->errors();
         return $request;
     }
 

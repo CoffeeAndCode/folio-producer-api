@@ -62,10 +62,8 @@ class Client
             $request = $command->execute();
 
             // if an InvalidTicket response is returned, reauthenticate and retry
-            if ($request && $request->get_response_code() === 200
-                && property_exists($request->response, 'status')
-                && $request->response->status === 'InvalidTicket'
-                && !$command->is_retry
+            if ($request && in_array('API returned status InvalidTicket', $request->errors()) &&
+                !$command->is_retry
             ) {
                 $this->_reset();
                 $this->execute('create_session');
@@ -74,7 +72,9 @@ class Client
 
             // 10 min before tickets expire, new ones are sent with every
             // API call that returns json
-            if ($request && property_exists($request, 'response')) {
+            if ($request &&
+                property_exists($request, 'response') &&
+                is_object($request->response)) {
                 if (property_exists($request->response, 'ticket')) {
                     $this->config->ticket = $request->response->ticket;
                 }
