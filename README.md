@@ -1,6 +1,21 @@
 # Folio Producer API
 [![Build Status](https://magnum.travis-ci.com/CoffeeAndCode/folio-producer-api.png?token=PgRq1y9q1wqEUV2w6sXq&branch=master)](https://magnum.travis-ci.com/CoffeeAndCode/folio-producer-api)
 
+This is a PHP library for wrapping the API calls to the Adobe Digital
+Publishing Suite Folio Producer API. The goal is to make your life easier and
+encapsulte the nitty gritty details. Specifically it will:
+
+* automatically handle authentication when making API requests
+* cache authentication information for making subsequent calls to the API
+* automatically update tokens and API servers when provided by API responses
+* reauthenticate and retry failed API requests if they return InvalidTicket errors
+
+---
+
+This project is a conglomeration between [Coffee and Code](http://www.coffeeandcode.com/)
+and [Studio Mercury](http://www.smny.us/), who have created many customized and
+engaging experiences together on the DPS platform for a wide variety of clients.
+
 
 ## Requirements
 
