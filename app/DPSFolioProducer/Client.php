@@ -80,11 +80,7 @@ class Client
             return $request;
         }
 
-        return (object) array('response' => (object) array(
-                'errors' => $command->errors,
-                'status' => 'ValidationError'
-            )
-        );
+        return new ErrorResponse($command->errors);
     }
 
     /**

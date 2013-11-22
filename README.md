@@ -44,7 +44,7 @@ the following retrieval of all folio metadata.
     } else {
         // iterate through all errors, including validation errors done
         // without issuing the actual API request
-        foreach ($request->errors as $error) {
+        foreach ($request->errors() as $error) {
             echo $error->message;
         }
     }
