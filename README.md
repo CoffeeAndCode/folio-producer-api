@@ -16,6 +16,10 @@ This project is a conglomeration between [Coffee and Code](http://www.coffeeandc
 and [Studio Mercury](http://www.smny.us/), who have created many customized and
 engaging experiences together on the DPS platform for a wide variety of clients.
 
+If you're interested in working with us on your own projects, you can reach out
+to us at [thebrothersmueller@smny.us](mailto:thebrothersmueller@smny.us) or
+[jon@coffeeandcode.com](mailto:jon@coffeeandcode.com).
+
 
 ## Requirements
 
