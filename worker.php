@@ -32,4 +32,4 @@ if (!is_null($options)) {
 
 $client = new DPSFolioProducer\Client($config);
 $request = $client->execute($command, $options);
-var_dump($request);
+echo serialize($request);
