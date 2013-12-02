@@ -229,12 +229,17 @@ class HTTPRequest
     /**
      * Determine if HTTP response returned an 'ok'
      *
-     * @return boolean Return true if status is found and 'ok', otherwise false
+     * @return boolean Return true if status is found and 'ok', otherwise true
      */
     private function isStatusOK()
     {
-        return (is_object($this->response) &&
-                property_exists($this->response, 'status') &&
-                $this->response->status === 'ok');
+        if (is_object($this->response) && property_exists($this->response, 'status')) {
+            if ($this->response->status === 'ok') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 }
