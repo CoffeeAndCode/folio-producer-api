@@ -138,6 +138,15 @@ class Config
     }
 
     /**
+     * Return configuration as a JSON object
+     *
+     * @return string returns json string representation of config
+     */
+    public function toJSON() {
+        return json_encode($this->data);
+    }
+
+    /**
      * Check PHP session and sync configuration properties if found
      *
      * @return void
