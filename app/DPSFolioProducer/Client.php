@@ -18,6 +18,12 @@ namespace DPSFolioProducer;
 class Client
 {
     /**
+     * Determines wether API requests are made asynchronously or not.
+     * @var boolean
+     */
+    protected $async = false;
+
+    /**
      * The class configuration object.
      * @var Config
      */
@@ -31,6 +37,38 @@ class Client
     public function __construct($config)
     {
         $this->config = new Config($config);
+        if (isset($this->config->db_host) &&
+            isset($this->config->db_name) &&
+            isset($this->config->db_password) &&
+            isset($this->config->db_username)) {
+
+            // connect to database and set it up if it doesn't exist
+            $dsn = 'mysql:dbname='.$this->config->db_name.';host='.$this->config->db_host;
+            $user = $this->config->db_username;
+            $password = $this->config->db_password;
+
+            try {
+                $dbh = new \PDO($dsn, $user, $password);
+                $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+                $result = $dbh->query('SHOW TABLES LIKE "dpsfp-jobs"');
+                if ($result->rowCount() === 0) {
+                    $result = $dbh->query(
+                        'CREATE TABLE IF NOT EXISTS `dpsfp-jobs` (
+                        `id` INT AUTO_INCREMENT NOT NULL,
+                        `user_id` INT NOT NULL,
+                        `command` TEXT NOT NULL,
+                        `result` TEXT DEFAULT NULL,
+                        `created_at` DATETIME NOT NULL,
+                        `finished_at` TIMESTAMP DEFAULT 0,
+                        `log` TEXT NOT NULL,
+                        PRIMARY KEY (`id`))
+                        CHARACTER SET utf8 COLLATE utf8_general_ci');
+                }
+                $this->async = true;
+            } catch (\PDOException $e) {
+                throw new \Exception('DB Connection failed: ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -43,6 +81,36 @@ class Client
      */
     public function execute($command_name, $options=array())
     {
+        if ($this->async && !isset($argv)) {
+            $log = tempnam(sys_get_temp_dir(), 'dpsfp-request-');
+            $command = 'php '.escapeshellarg('worker.php').' '.escapeshellarg($command_name).' '.escapeshellarg($this->config->toJSON()).' '.escapeshellarg(json_encode($options)).' >> '.escapeshellarg($log).' &';
+
+            $dsn = 'mysql:dbname='.$this->config->db_name.';host='.$this->config->db_host;
+            $user = $this->config->db_username;
+            $password = $this->config->db_password;
+
+            $dbh = new \PDO($dsn, $user, $password);
+            $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            $statement = $dbh->prepare('INSERT INTO `dpsfp-jobs` (user_id, command, created_at, log) VALUES (:user_id, :command, NOW(), :log)');
+            $statement->execute(array(
+                ':user_id' => 10,
+                ':command' => $command,
+                ':log' => $log
+            ));
+
+            $jobID = $dbh->lastInsertId();
+            // prepend jobID to the command
+            $command = 'php '.escapeshellarg('worker.php').' '.$jobID.' '.substr($command, strlen('php '.escapeshellarg('worker.php')));
+            $statement = $dbh->prepare('UPDATE `dpsfp-jobs` SET command = :command WHERE id = :job_id');
+            $statement->execute(array(
+                ':job_id' => $jobID,
+                ':command' => $command
+            ));
+            exec($command);
+
+            return $jobID;
+        }
+
         $command_class = $this->_getCommandClass($command_name);
         $command = new $command_class($this->config, $options);
 

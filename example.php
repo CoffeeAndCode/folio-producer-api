@@ -15,16 +15,17 @@ $client = new DPSFolioProducer\Client($config);
 
 
 // Get Folios Metadata
-$request = $client->execute('get_folios_metadata');
-var_dump($request);
-var_dump($request->options['http']['header']);
-echo '<hr />';
+$asyncRequestID = $client->execute('get_folios_metadata');
+var_dump($asyncRequestID);
+// var_dump($request);
+// var_dump($request->options['http']['header']);
+// echo '<hr />';
 
-echo '<h1>Folios</h1>';
-foreach ($request->response->folios as $folio) {
-    print_r($folio);
-    echo '<hr />';
-}
+// echo '<h1>Folios</h1>';
+// foreach ($request->response->folios as $folio) {
+//     print_r($folio);
+//     echo '<hr />';
+// }
 
 
 // Create Session

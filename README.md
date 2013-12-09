@@ -232,6 +232,34 @@ are `Error`, `APIResponseError`, and `ValidationError`. They all have a
 the data returned by Adobe's DPS server.
 
 
+## Asynchronous Requests
+
+The Adobe API calls can sometimes take quite a long time to complete, so we
+have started on altering the library to work with asynchronous api requests.
+
+If you specify the `db_host`, `db_name`, `db_password`, and `db_username` config
+variables, it will connect to a MySQL database and generate a table for storing
+job information. Also, the `execute` method will now return a `jobID` that you
+can use to query for the results at a later time.
+
+An example would be:
+
+    $client = new DPSFolioProducer\Client($config);
+    $asyncRequestID = $client->execute('get_folios_metadata');
+
+    // ...
+
+    // connect to mysql and look for a job with id = $asyncRequestID
+    // db columns are:
+    //     id - required integer for the job ID
+    //     user_id - required integer that refers to user who requested the job
+    //     command - required text of the command that is ran
+    //     result - the serialized HTTPRequest object that was normally returned from execute()
+    //     created_at - datetime that the job is issued
+    //     finished_at - datetime that the job is finished
+    //     log - temporary file that is used to unblock main php process and holds STDOUT
+
+
 ## Testing
 
 PHPUnit is brought into the project with Composer which requires PHP 5.3.2+ to run.

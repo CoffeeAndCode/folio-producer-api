@@ -52,6 +52,10 @@ class Config
     {
         $this->properties = array(
             'api_server',
+            'db_host',
+            'db_name',
+            'db_password',
+            'db_username',
             'company',
             'consumer_key',
             'consumer_secret',
