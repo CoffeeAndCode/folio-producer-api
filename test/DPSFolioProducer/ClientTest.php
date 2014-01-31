@@ -1,6 +1,4 @@
 <?php
-use \Mockery as m;
-
 /**
  * Inherit from class we are testing so we can reveal properties
  * in tests that are not accessible in the real class.
@@ -47,11 +45,6 @@ EOT;
         'password' => '',
         'session_props' => ''
     );
-
-    public function tearDown()
-    {
-        m::close();
-    }
 
     protected static function unlockMethod($name) {
         $class = new ReflectionClass('MyClass');
