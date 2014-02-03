@@ -133,7 +133,9 @@ class APIRequest
         if (!isset($headerHash['Authorization'])) {
             $headerHash['Authorization'] = $this->authHeader();
         }
-
+        
+        $headerHash['Connection'] = "close";
+        
         // collapse array keys with differing case
         $headerHash = array_change_key_case($headerHash);
 
