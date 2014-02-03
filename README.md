@@ -33,6 +33,13 @@ a new one for each page request. By simply calling `session_start()`, this
 library will cache authentication information in sessions and sync changes
 accordingly.
 
+The project uses [Composer](https://getcomposer.org/) for managing dependencies,
+which only includes [PHPUnit](http://phpunit.de/) for development.
+
+For production, use: `composer install --no-dev`
+
+For local development, use: `composer install`
+
 
 ## Usage
 
