@@ -1,5 +1,5 @@
 # Folio Producer API
-[![Build Status](https://magnum.travis-ci.com/CoffeeAndCode/folio-producer-api.png?token=PgRq1y9q1wqEUV2w6sXq&branch=master)](https://magnum.travis-ci.com/CoffeeAndCode/folio-producer-api)
+[![Build Status](https://travis-ci.org/CoffeeAndCode/folio-producer-api.svg?branch=master)](https://travis-ci.org/CoffeeAndCode/folio-producer-api) [ ![Codeship Status for CoffeeAndCode/folio-producer-api](https://www.codeship.io/projects/84a8b4b0-92a4-0131-a873-728a4ec353a5/status?branch=master)](https://www.codeship.io/projects/16561)
 
 This is a PHP library for wrapping the API calls to the Adobe Digital
 Publishing Suite Folio Producer API. The goal is to make your life easier and
