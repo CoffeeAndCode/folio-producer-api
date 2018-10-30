@@ -1,5 +1,5 @@
 # Folio Producer API
-[![Build Status](https://travis-ci.org/CoffeeAndCode/folio-producer-api.svg?branch=master)](https://travis-ci.org/CoffeeAndCode/folio-producer-api) [ ![Codeship Status for CoffeeAndCode/folio-producer-api](https://www.codeship.io/projects/84a8b4b0-92a4-0131-a873-728a4ec353a5/status?branch=master)](https://www.codeship.io/projects/16561)
+[![Build Status](https://travis-ci.org/CoffeeAndCode/folio-producer-api.svg?branch=master)](https://travis-ci.org/CoffeeAndCode/folio-producer-api)
 
 This is a PHP library for wrapping the API calls to the Adobe Digital
 Publishing Suite Folio Producer API. The goal is to make your life easier and
@@ -256,3 +256,28 @@ Note: Test files must end in `*Test.php` and test method names must start with `
 If you have xdebug installed, you can create an html code coverage report by running:
 
     vendor/bin/phpunit --coverage-html ./coverage
+
+### CI Server
+
+This project used to run on CodeShip with the following config:
+
+#### Setup
+
+```
+# Set php version through phpenv. 5.3, 5.4 and 5.5 available
+phpenv local 5.5
+# Install dependencies through Composer
+composer install --prefer-source --no-interaction
+# Install extensions through Pecl
+# yes yes | pecl install memcache
+```
+
+#### Test
+
+```
+phpunit
+phpenv local 5.4
+phpunit
+phpenv local 5.3
+phpunit
+```
